@@ -57,7 +57,13 @@ RUN composer install --no-dev --optimize-autoloader
 # Create environment file for deployment first
 RUN cp .env.example .env && \
     sed -i 's/APP_URL=http:\/\/localhost/APP_URL=https:\/\/digital-claim-system.onrender.com/' .env && \
-    echo "ASSET_URL=https://digital-claim-system.onrender.com" >> .env
+    echo "ASSET_URL=https://digital-claim-system.onrender.com" >> .env && \
+    sed -i 's/DB_CONNECTION=sqlite/DB_CONNECTION=pgsql/' .env && \
+    echo "DB_HOST=db.surssccnzmejgdufnibl.supabase.co" >> .env && \
+    echo "DB_PORT=5432" >> .env && \
+    echo "DB_DATABASE=postgres" >> .env && \
+    echo "DB_USERNAME=postgres" >> .env && \
+    echo "DB_PASSWORD=DigitalClaimSystem@123" >> .env
 
 # Generate application key
 RUN php artisan key:generate
@@ -66,10 +72,7 @@ RUN php artisan key:generate
 RUN npm install \
     && npm run build
 
-# Create SQLite database file
-RUN touch /var/www/html/database/database.sqlite
-
-# Run database migrations
+# Wait for database connection and run migrations
 RUN php artisan migrate --force
 
 # Expose port 8080
