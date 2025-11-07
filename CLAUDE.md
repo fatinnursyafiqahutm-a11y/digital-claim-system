@@ -1,0 +1,1 @@
+- whatever you do, try follow existing design, patterns, standards and practices. do not assume anything
