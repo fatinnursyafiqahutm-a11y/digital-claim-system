@@ -1,0 +1,74 @@
+# Use PHP 8.2 FPM as base image
+FROM php:8.2-fpm-alpine
+
+# Set working directory
+WORKDIR /var/www/html
+
+# Install system dependencies
+RUN apk add --no-cache \
+    git \
+    curl \
+    libpng-dev \
+    oniguruma-dev \
+    libxml2-dev \
+    zip \
+    unzip \
+    jpeg-dev \
+    freetype-dev \
+    libzip-dev \
+    postgresql-dev \
+    nodejs \
+    npm \
+    icu-dev
+
+# Clear cache
+RUN rm -rf /var/cache/apk/*
+
+# Install PHP extensions
+RUN docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql && \
+    docker-php-ext-install \
+    pdo \
+    pdo_mysql \
+    pdo_pgsql \
+    mysqli \
+    gd \
+    zip \
+    bcmath \
+    opcache \
+    mbstring \
+    xml \
+    ctype \
+    intl
+
+# Configure PHP
+RUN sed -i "s/memory_limit = 128M/memory_limit = 512M/" /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini
+
+# Install Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Copy existing application directory permissions
+COPY --chown=www-data:www-data . /var/www/html
+
+# Set permissions
+RUN chown -R www-data:www-data /var/www/html \
+    && chmod -R 755 /var/www/html/storage \
+    && chmod -R 755 /var/www/html/bootstrap/cache
+
+# Install PHP dependencies
+RUN composer install --no-dev --optimize-autoloader
+
+# Install Node.js dependencies and build assets
+RUN npm install \
+    && npm run build
+
+# Copy environment file
+RUN cp .env.example .env
+
+# Generate application key
+RUN php artisan key:generate
+
+# Expose port 8080 (Render's default)
+EXPOSE 8080
+
+# Start PHP development server for Render
+CMD php artisan serve --host=0.0.0.0 --port=8080

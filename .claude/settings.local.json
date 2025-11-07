@@ -27,7 +27,8 @@
       "Bash(git commit:*)",
       "Bash(git push:*)",
       "WebFetch(domain:github.com)",
-      "Bash(npm run lint:*)"
+      "Bash(npm run lint:*)",
+      "Bash(README.md)"
     ],
     "deny": [],
     "ask": []
