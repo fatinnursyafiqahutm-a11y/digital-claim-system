@@ -1,28 +1,35 @@
 #!/bin/sh
 
-# Wait a moment for database connection
-sleep 5
+echo "=== STARTING APPLICATION ==="
+echo "Environment variables:"
+echo "DB_CONNECTION: ${DB_CONNECTION}"
+echo "DB_HOST: ${DB_HOST}"
+echo "DB_DATABASE: ${DB_DATABASE}"
+echo "DB_USERNAME: ${DB_USERNAME}"
 
-# Clear all caches again to ensure environment variables are loaded
+# Wait a moment for database connection
+sleep 3
+
+echo "Clearing Laravel caches..."
 php artisan config:clear
 php artisan cache:clear
 php artisan route:clear
 php artisan view:clear
 
-# Check database connection
+echo "Checking database connection..."
 php artisan tinker --execute="
 try {
     \DB::connection()->getPdo();
-    echo 'Database connection successful\n';
+    echo 'Database connection SUCCESSFUL\n';
 } catch (\Exception \$e) {
-    echo 'Database connection failed: ' . \$e->getMessage() . '\n';
-    echo 'Current database config: ' . json_encode(config('database.default')) . '\n';
+    echo 'Database connection FAILED: ' . \$e->getMessage() . '\n';
+    echo 'Current database config: ' . config('database.default') . '\n';
     echo 'Environment DB_CONNECTION: ' . env('DB_CONNECTION') . '\n';
 }
 "
 
-# Run database migrations
+echo "Running database migrations..."
 php artisan migrate --force
 
-# Start the Laravel server
+echo "Starting Laravel server..."
 php artisan serve --host=0.0.0.0 --port=8080
