@@ -61,8 +61,22 @@ RUN composer install --no-dev --optimize-autoloader
 RUN npm install \
     && npm run build
 
-# Copy environment file (will be overridden by Render environment variables)
-RUN cp .env.example .env
+# Create production environment file with PostgreSQL configuration
+RUN echo "APP_NAME=Laravel" > .env && \
+    echo "APP_ENV=production" >> .env && \
+    echo "APP_KEY=" >> .env && \
+    echo "APP_DEBUG=false" >> .env && \
+    echo "APP_URL=http://localhost" >> .env && \
+    echo "DB_CONNECTION=pgsql" >> .env && \
+    echo "DB_HOST=\${DB_HOST}" >> .env && \
+    echo "DB_PORT=\${DB_PORT}" >> .env && \
+    echo "DB_DATABASE=\${DB_DATABASE}" >> .env && \
+    echo "DB_USERNAME=\${DB_USERNAME}" >> .env && \
+    echo "DB_PASSWORD=\${DB_PASSWORD}" >> .env && \
+    echo "QUEUE_CONNECTION=database" >> .env && \
+    echo "CACHE_DRIVER=database" >> .env && \
+    echo "SESSION_DRIVER=database" >> .env && \
+    echo "FILESYSTEM_DISK=local" >> .env
 
 # Generate application key
 RUN php artisan key:generate
