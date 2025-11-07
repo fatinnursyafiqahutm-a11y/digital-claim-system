@@ -9,46 +9,16 @@ services:
     dockerContext: .
     plan: free
     region: oregon
-    healthCheckPath: /health
+    healthCheckPath: /
     autoDeploy: true
     envVars:
-      # Laravel Configuration
+      # Only set essential environment variables
       - key: APP_ENV
         value: production
       - key: APP_DEBUG
         value: false
       - key: APP_URL
         sync: true # Set automatically by Render
-      - key: APP_KEY
-        generateValue: true
-
-      # Database Configuration (Supabase)
-      - key: DB_CONNECTION
-        value: pgsql
-      - key: DB_HOST
-        value: db.surssccnzmejgdufnibl.supabase.co
-      - key: DB_PORT
-        value: 5432
-      - key: DB_DATABASE
-        value: postgres
-      - key: DB_USERNAME
-        value: postgres
-      - key: DB_PASSWORD
-        value: DigitalClaimSystem@123
-
-      # Laravel Queue and Cache
-      - key: QUEUE_CONNECTION
-        value: database
-      - key: CACHE_DRIVER
-        value: database
-      - key: SESSION_DRIVER
-        value: database
-      - key: FILESYSTEM_DISK
-        value: local
-
-      # Build Configuration
-      - key: APP_MAINTENANCE_DRIVER
-        value: file
 
   # Persistent Disk for File Storage
   - type: disk

@@ -61,38 +61,25 @@ RUN composer install --no-dev --optimize-autoloader
 RUN npm install \
     && npm run build
 
-# Create production environment file with PostgreSQL configuration
-# Force the environment to use PostgreSQL regardless of env variables
-RUN echo "APP_NAME=Laravel" > .env && \
-    echo "APP_ENV=production" >> .env && \
-    echo "APP_KEY=" >> .env && \
-    echo "APP_DEBUG=false" >> .env && \
-    echo "APP_URL=\${APP_URL:-http://localhost}" >> .env && \
-    echo "DB_CONNECTION=pgsql" >> .env && \
-    echo "DB_HOST=\${DB_HOST:-db.surssccnzmejgdufnibl.supabase.co}" >> .env && \
-    echo "DB_PORT=\${DB_PORT:-5432}" >> .env && \
-    echo "DB_DATABASE=\${DB_DATABASE:-postgres}" >> .env && \
-    echo "DB_USERNAME=\${DB_USERNAME:-postgres}" >> .env && \
-    echo "DB_PASSWORD=\${DB_PASSWORD:-DigitalClaimSystem@123}" >> .env && \
-    echo "QUEUE_CONNECTION=database" >> .env && \
-    echo "CACHE_DRIVER=database" >> .env && \
+# Copy environment file and force PostgreSQL connection
+RUN cp .env.example .env && \
+    sed -i 's/DB_CONNECTION=sqlite/DB_CONNECTION=pgsql/' .env && \
+    echo "DB_HOST=db.surssccnzmejgdufnibl.supabase.co" >> .env && \
+    echo "DB_PORT=5432" >> .env && \
+    echo "DB_DATABASE=postgres" >> .env && \
+    echo "DB_USERNAME=postgres" >> .env && \
+    echo "DB_PASSWORD=DigitalClaimSystem@123" >> .env && \
     echo "SESSION_DRIVER=database" >> .env && \
-    echo "FILESYSTEM_DISK=local" >> .env
+    echo "QUEUE_CONNECTION=database" >> .env
 
 # Generate application key
 RUN php artisan key:generate
 
-# Clear all caches to ensure environment variables are used
-RUN php artisan config:clear && \
-    php artisan cache:clear && \
-    php artisan route:clear && \
-    php artisan view:clear
+# Clear caches
+RUN php artisan config:clear
 
-# Test database connection during build
-RUN php artisan tinker --execute="echo 'Testing database connection...\n'; try { \DB::connection()->getPdo(); echo 'Database connection SUCCESSFUL during build!\n'; } catch (\Exception \$e) { echo 'Database connection failed during build: ' . \$e->getMessage() . '\n'; }"
-
-# Expose port (Render uses PORT environment variable)
+# Expose port for Render
 EXPOSE 10000
 
-# Start Laravel server directly (this will be overridden by Render's Docker Command)
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=${PORT:-10000}"]
+# Simple Laravel server start
+CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=10000"]
