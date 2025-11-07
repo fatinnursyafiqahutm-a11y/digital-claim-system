@@ -5,7 +5,7 @@ services:
     env: docker
     repo: https://github.com/fatinnursyafiqahutm-a11y/digital-claim-system.git
     rootDir: .
-    dockerfilePath: ./Dockerfile.production
+    dockerfilePath: ./Dockerfile.deploy
     dockerContext: .
     plan: free
     region: oregon

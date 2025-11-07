@@ -1,0 +1,93 @@
+# Use PHP 8.2 FPM as base image
+FROM php:8.2-fpm-alpine
+
+# Set working directory
+WORKDIR /var/www/html
+
+# Install system dependencies
+RUN apk add --no-cache \
+    git \
+    curl \
+    libpng-dev \
+    oniguruma-dev \
+    libxml2-dev \
+    zip \
+    unzip \
+    jpeg-dev \
+    freetype-dev \
+    libzip-dev \
+    postgresql-dev \
+    nodejs \
+    npm
+
+# Clear cache
+RUN rm -rf /var/cache/apk/*
+
+# Install PHP extensions
+RUN docker-php-ext-install \
+    pdo \
+    pdo_mysql \
+    pdo_pgsql \
+    mysqli \
+    gd \
+    zip \
+    bcmath \
+    opcache \
+    mbstring \
+    xml \
+    ctype
+
+# Configure PHP
+RUN sed -i "s/memory_limit = 128M/memory_limit = 512M/" /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini
+
+# Install Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Copy application files
+COPY --chown=www-data:www-data . /var/www/html
+
+# Set permissions
+RUN chown -R www-data:www-data /var/www/html \
+    && chmod -R 755 /var/www/html/storage \
+    && chmod -R 755 /var/www/html/bootstrap/cache
+
+# Install PHP dependencies
+RUN composer install --no-dev --optimize-autoloader
+
+# Install Node.js dependencies and build assets
+RUN npm install \
+    && npm run build
+
+# Create environment file with PostgreSQL configuration
+RUN echo "APP_NAME=\"Digital Claim System\"" > .env && \
+    echo "APP_ENV=production" >> .env && \
+    echo "APP_DEBUG=false" >> .env && \
+    echo "APP_URL=http://localhost" >> .env && \
+    echo "DB_CONNECTION=pgsql" >> .env && \
+    echo "DB_HOST=db.surssccnzmejgdufnibl.supabase.co" >> .env && \
+    echo "DB_PORT=5432" >> .env && \
+    echo "DB_DATABASE=postgres" >> .env && \
+    echo "DB_USERNAME=postgres" >> .env && \
+    echo "DB_PASSWORD=DigitalClaimSystem@123" >> .env && \
+    echo "CACHE_DRIVER=file" >> .env && \
+    echo "SESSION_DRIVER=file" >> .env && \
+    echo "QUEUE_CONNECTION=sync" >> .env && \
+    echo "FILESYSTEM_DISK=local" >> .env
+
+# Generate application key
+RUN php artisan key:generate
+
+# Clear all caches
+RUN php artisan config:clear && \
+    php artisan cache:clear && \
+    php artisan route:clear && \
+    php artisan view:clear
+
+# Run database migrations
+RUN php artisan migrate --force
+
+# Expose port
+EXPOSE 10000
+
+# Start Laravel server
+CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=10000"]
