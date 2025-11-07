@@ -16,7 +16,7 @@ RUN apk add --no-cache \
     jpeg-dev \
     freetype-dev \
     libzip-dev \
-    sqlite \
+    postgresql-dev \
     nodejs \
     npm
 
@@ -27,7 +27,6 @@ RUN rm -rf /var/cache/apk/*
 RUN docker-php-ext-install \
     pdo \
     pdo_mysql \
-    pdo_sqlite \
     pdo_pgsql \
     mysqli \
     gd \
@@ -38,8 +37,7 @@ RUN docker-php-ext-install \
     xml \
     ctype \
     iconv \
-    intl \
-    pdo_mysql
+    intl
 
 # Configure PHP
 RUN sed -i "s/memory_limit = 128M/memory_limit = 512M/" /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini
@@ -68,8 +66,8 @@ RUN cp .env.example .env
 # Generate application key
 RUN php artisan key:generate
 
-# Expose port 9000 for PHP-FPM
-EXPOSE 9000
+# Expose port 8080 (Render's default)
+EXPOSE 8080
 
-# Start PHP-FPM
-CMD ["php-fpm"]
+# Start PHP development server for Render
+CMD php artisan serve --host=0.0.0.0 --port=8080
