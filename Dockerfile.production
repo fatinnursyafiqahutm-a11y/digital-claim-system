@@ -61,11 +61,14 @@ RUN composer install --no-dev --optimize-autoloader
 RUN npm install \
     && npm run build
 
-# Copy environment file
+# Copy environment file (will be overridden by Render environment variables)
 RUN cp .env.example .env
 
 # Generate application key
 RUN php artisan key:generate
+
+# Clear configuration cache to ensure environment variables are used
+RUN php artisan config:clear
 
 # Expose port 8080 (Render's default)
 EXPOSE 8080

@@ -7,6 +7,16 @@ use App\Http\Controllers\ClaimController;
 use App\Http\Controllers\ReceiptController;
 use Illuminate\Support\Facades\Route;
 
+// Health check route for Render
+Route::get('/health', function () {
+    return response()->json([
+        'status' => 'healthy',
+        'timestamp' => now()->toISOString(),
+        'database' => config('database.default'),
+        'environment' => config('app.env')
+    ]);
+});
+
 // Redirect root to login
 Route::get('/', function () {
     return redirect()->route('login');
