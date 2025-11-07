@@ -49,14 +49,10 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Copy existing application directory permissions
 COPY --chown=www-data:www-data . /var/www/html
 
-# Copy startup script
-COPY --chown=www-data:www-data start.sh /usr/local/bin/
-
 # Set permissions
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html/storage \
-    && chmod -R 755 /var/www/html/bootstrap/cache \
-    && chmod +x /usr/local/bin/start.sh
+    && chmod -R 755 /var/www/html/bootstrap/cache
 
 # Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader
@@ -64,6 +60,12 @@ RUN composer install --no-dev --optimize-autoloader
 # Install Node.js dependencies and build assets
 RUN npm install \
     && npm run build
+
+# Copy startup script
+COPY --chown=www-data:www-data start.sh /usr/local/bin/start.sh
+
+# Set permissions for startup script
+RUN chmod +x /usr/local/bin/start.sh
 
 # Create production environment file with PostgreSQL configuration
 RUN echo "APP_NAME=Laravel" > .env && \
