@@ -1,4 +1,4 @@
-# Use PHP 8.2 FPM as base image
+# Use PHP 8.2 FPM as base image - FIXED VERSION
 FROM php:8.2-fpm-alpine
 
 # Set working directory
@@ -23,7 +23,7 @@ RUN apk add --no-cache \
 # Clear cache
 RUN rm -rf /var/cache/apk/*
 
-# Install PHP extensions (removed problematic iconv and intl)
+# Install PHP extensions
 RUN docker-php-ext-install \
     pdo \
     pdo_mysql \
@@ -43,7 +43,7 @@ RUN sed -i "s/memory_limit = 128M/memory_limit = 512M/" /usr/local/etc/php/conf.
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Copy existing application directory permissions
+# Copy application files
 COPY --chown=www-data:www-data . /var/www/html
 
 # Set permissions
@@ -58,14 +58,36 @@ RUN composer install --no-dev --optimize-autoloader
 RUN npm install \
     && npm run build
 
-# Copy environment file
-RUN cp .env.example .env
+# Create environment file with PostgreSQL configuration - FIX SQLITE ISSUE
+RUN echo "APP_NAME=\"Digital Claim System\"" > .env && \
+    echo "APP_ENV=production" >> .env && \
+    echo "APP_DEBUG=false" >> .env && \
+    echo "APP_URL=http://localhost" >> .env && \
+    echo "DB_CONNECTION=pgsql" >> .env && \
+    echo "DB_HOST=db.surssccnzmejgdufnibl.supabase.co" >> .env && \
+    echo "DB_PORT=5432" >> .env && \
+    echo "DB_DATABASE=postgres" >> .env && \
+    echo "DB_USERNAME=postgres" >> .env && \
+    echo "DB_PASSWORD=DigitalClaimSystem@123" >> .env && \
+    echo "CACHE_DRIVER=file" >> .env && \
+    echo "SESSION_DRIVER=file" >> .env && \
+    echo "QUEUE_CONNECTION=sync" >> .env && \
+    echo "FILESYSTEM_DISK=local" >> .env
 
 # Generate application key
 RUN php artisan key:generate
 
-# Expose port 8080 (Render's default)
+# Clear Laravel caches
+RUN php artisan config:clear && \
+    php artisan cache:clear && \
+    php artisan route:clear && \
+    php artisan view:clear
+
+# Run database migrations
+RUN php artisan migrate --force
+
+# Expose port 8080
 EXPOSE 8080
 
-# Start PHP development server for Render
+# Start Laravel server
 CMD php artisan serve --host=0.0.0.0 --port=8080
