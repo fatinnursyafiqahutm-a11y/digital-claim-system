@@ -58,30 +58,14 @@ RUN composer install --no-dev --optimize-autoloader
 RUN npm install \
     && npm run build
 
-# Create environment file with PostgreSQL configuration - FIX SQLITE ISSUE
-RUN echo "APP_NAME=\"Digital Claim System\"" > .env && \
-    echo "APP_ENV=production" >> .env && \
-    echo "APP_DEBUG=false" >> .env && \
-    echo "APP_URL=http://localhost" >> .env && \
-    echo "DB_CONNECTION=pgsql" >> .env && \
-    echo "DB_HOST=db.surssccnzmejgdufnibl.supabase.co" >> .env && \
-    echo "DB_PORT=5432" >> .env && \
-    echo "DB_DATABASE=postgres" >> .env && \
-    echo "DB_USERNAME=postgres" >> .env && \
-    echo "DB_PASSWORD=DigitalClaimSystem@123" >> .env && \
-    echo "CACHE_DRIVER=file" >> .env && \
-    echo "SESSION_DRIVER=file" >> .env && \
-    echo "QUEUE_CONNECTION=sync" >> .env && \
-    echo "FILESYSTEM_DISK=local" >> .env
+# Create environment file for deployment
+RUN cp .env.example .env
 
 # Generate application key
 RUN php artisan key:generate
 
-# Clear Laravel caches
-RUN php artisan config:clear && \
-    php artisan cache:clear && \
-    php artisan route:clear && \
-    php artisan view:clear
+# Create SQLite database file
+RUN touch /var/www/html/database/database.sqlite
 
 # Run database migrations
 RUN php artisan migrate --force
