@@ -60,10 +60,11 @@ RUN cp .env.example .env && \
     echo "ASSET_URL=https://digital-claim-system.onrender.com" >> .env && \
     sed -i 's/DB_CONNECTION=sqlite/DB_CONNECTION=pgsql/' .env && \
     echo "DB_HOST=db.surssccnzmejgdufnibl.supabase.co" >> .env && \
-    echo "DB_PORT=5432" >> .env && \
+    echo "DB_PORT=6543" >> .env && \
     echo "DB_DATABASE=postgres" >> .env && \
     echo "DB_USERNAME=postgres" >> .env && \
-    echo "DB_PASSWORD=DigitalClaimSystem@123" >> .env
+    echo "DB_PASSWORD=DigitalClaimSystem@123" >> .env && \
+    echo "DB_SSLMODE=require" >> .env
 
 # Generate application key
 RUN php artisan key:generate
@@ -75,5 +76,20 @@ RUN npm install \
 # Expose port 8080
 EXPOSE 8080
 
-# Start Laravel server with migrations
-CMD sh -c "php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=8080"
+# Create startup script
+RUN echo '#!/bin/sh' > /start.sh && \
+    echo 'echo "Starting application..."' >> /start.sh && \
+    echo 'echo "Testing database connection..."' >> /start.sh && \
+    echo 'for i in 1 2 3 4 5; do' >> /start.sh && \
+    echo '  if php artisan tinker --execute="try { \DB::connection()->getPdo(); echo \"Connection successful!\n\"; exit(0); } catch (\Exception \$e) { echo \"Attempt \$i: \" . \$e->getMessage() . \"\n\"; if (\$i == 5) { exit(1); } sleep 2; }"; then' >> /start.sh && \
+    echo '    break' >> /start.sh && \
+    echo '  fi' >> /start.sh && \
+    echo 'done' >> /start.sh && \
+    echo 'echo "Running migrations..."' >> /start.sh && \
+    echo 'php artisan migrate --force' >> /start.sh && \
+    echo 'echo "Starting server..."' >> /start.sh && \
+    echo 'php artisan serve --host=0.0.0.0 --port=8080' >> /start.sh && \
+    chmod +x /start.sh
+
+# Start the application
+CMD ["/start.sh"]
