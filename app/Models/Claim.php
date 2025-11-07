@@ -242,17 +242,66 @@ class Claim extends Model
         ]);
 
         foreach ($requiredFields as $field) {
-            // Handle special mapping for accommodation category
-            if ($this->category->name === 'accommodation' && $field === 'travel_dates') {
-                // Check if we have both check_in_date and check_out_date
-                $hasCheckIn = !empty($categoryData['check_in_date']);
-                $hasCheckOut = !empty($categoryData['check_out_date']);
+            // Handle normal field validation
+            if (empty($categoryData[$field])) {
+                // Map field names to user-friendly labels
+                $fieldLabels = [
+                    'vehicle_details' => 'Vehicle details',
+                    'fuel_type' => 'Fuel type',
+                    'station_name' => 'Station name',
+                    'purchase_date' => 'Purchase date',
+                    'odometer_start' => 'Odometer start reading',
+                    'odometer_end' => 'Odometer end reading',
+                    'customer_name' => 'Customer name',
+                    'company_name' => 'Company name',
+                    'meeting_purpose' => 'Meeting purpose',
+                    'location' => 'Location',
+                    'attendees_count' => 'Number of attendees',
+                    'hotel_name' => 'Hotel name',
+                    'check_in_date' => 'Check-in date',
+                    'check_out_date' => 'Check-out date',
+                    'room_type' => 'Room type',
+                    'booking_reference' => 'Booking reference',
+                    'travel_from' => 'Travel from',
+                    'travel_to' => 'Travel to',
+                    'travel_purpose' => 'Travel purpose',
+                    'transport_mode' => 'Transport mode',
+                    'departure_date' => 'Departure date',
+                    'return_date' => 'Return date',
+                    'route_from' => 'Route from',
+                    'route_to' => 'Route to',
+                    'toll_plaza_name' => 'Toll plaza name',
+                    'travel_date' => 'Travel date',
+                    'vehicle_type' => 'Vehicle type',
+                    'service_provider' => 'Service provider',
+                    'account_number' => 'Account number',
+                    'billing_period_start' => 'Billing period start',
+                    'billing_period_end' => 'Billing period end',
+                    'business_usage_percentage' => 'Business usage percentage',
+                    'plan_type' => 'Plan type',
+                    'parking_location' => 'Parking location',
+                    'parking_duration' => 'Parking duration',
+                    'start_date' => 'Start date',
+                    'end_date' => 'End date',
+                    'parking_type' => 'Parking type',
+                    'client_name' => 'Client name',
+                    'client_company' => 'Client company',
+                    'visit_date' => 'Visit date',
+                    'duration_hours' => 'Duration hours',
+                    'medical_provider' => 'Medical provider',
+                    'patient_name' => 'Patient name',
+                    'treatment_type' => 'Treatment type',
+                    'treatment_date' => 'Treatment date',
+                    'medical_condition' => 'Medical condition',
+                    'prescription_required' => 'Prescription required',
+                    'expense_details' => 'Expense details',
+                    'expense_type' => 'Expense type',
+                    'justification' => 'Business justification',
+                    'supplier_name' => 'Supplier name'
+                ];
 
-                if (!$hasCheckIn || !$hasCheckOut) {
-                    $errors[] = "Check-in and check-out dates are required for {$this->category->display_name} claims.";
-                }
-            } elseif (empty($categoryData[$field])) {
-                $errors[] = "Field '{$field}' is required for {$this->category->display_name} claims.";
+                $fieldLabel = $fieldLabels[$field] ?? $field;
+                $errors[] = "Field '{$fieldLabel}' is required for {$this->category->display_name} claims.";
             }
         }
 

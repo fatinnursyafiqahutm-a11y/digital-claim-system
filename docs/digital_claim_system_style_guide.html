@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Digital Claim System - Style Guide</title>
+  <style>
+    /* --------------------
+       Brand tokens
+       -------------------- */
+    :root{
+      --primary-red:#8b1e1e;
+      --dark-red:#6d1818;
+      --accent-green:#28a745;
+      --accent-yellow:#f5c542;
+      --muted:#9aa0a6;
+      --bg-soft:rgba(255,255,255,0.95);
+      --glass-blur: blur(20px);
+      --radius:16px;
+      --shadow:0 8px 32px rgba(15,15,15,0.1);
+      --glass-border: rgba(255,255,255,0.18);
+      --text:#1a1a1a;
+      --mono: 'Inter', 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
+    }
+
+    /* --------------------
+       Page layout
+       -------------------- */
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--mono);
+      color:var(--text);
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding:40px 28px;
+      -webkit-font-smoothing:antialiased;
+      min-height:100vh;
+      position:relative;
+    }
+    body::before{
+      content:'';
+      position:absolute;
+      top:0;
+      left:0;
+      right:0;
+      bottom:0;
+      background: 
+        radial-gradient(circle at 20% 50%, rgba(139,30,30,0.15) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(102,126,234,0.15) 0%, transparent 50%);
+      pointer-events:none;
+    }
+    h1{
+      color:#fff;
+      margin:0 0 32px;
+      font-size:42px;
+      font-weight:800;
+      text-align:center;
+      letter-spacing:-0.5px;
+      text-shadow:0 4px 20px rgba(0,0,0,0.2);
+      animation:fadeInDown 0.6s ease-out;
+    }
+    @keyframes fadeInDown{
+      from{opacity:0;transform:translateY(-20px)}
+      to{opacity:1;transform:translateY(0)}
+    }
+    section{
+      background:var(--bg-soft);
+      backdrop-filter:var(--glass-blur);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      border:1px solid var(--glass-border);
+      padding:28px;
+      margin-bottom:24px;
+      position:relative;
+      transition:transform 0.3s ease, box-shadow 0.3s ease;
+      animation:fadeIn 0.6s ease-out backwards;
+    }
+    section:nth-child(1){animation-delay:0.1s}
+    section:nth-child(2){animation-delay:0.15s}
+    section:nth-child(3){animation-delay:0.2s}
+    section:nth-child(4){animation-delay:0.25s}
+    section:nth-child(5){animation-delay:0.3s}
+    @keyframes fadeIn{
+      from{opacity:0;transform:translateY(20px)}
+      to{opacity:1;transform:translateY(0)}
+    }
+    section:hover{
+      transform:translateY(-4px);
+      box-shadow:0 12px 40px rgba(15,15,15,0.15);
+    }
+    section h2{
+      color:var(--primary-red);
+      margin:0 0 20px;
+      font-size:24px;
+      font-weight:800;
+      position:relative;
+      display:inline-block;
+    }
+    section h2::after{
+      content:'';
+      position:absolute;
+      bottom:-6px;
+      left:0;
+      width:40px;
+      height:3px;
+      background:linear-gradient(90deg, var(--primary-red), var(--accent-yellow));
+      border-radius:2px;
+    }
+    .row{display:flex;gap:24px;flex-wrap:wrap}
+    .col{flex:1;min-width:280px}
+
+    /* --------------------
+       Colors & swatches
+       -------------------- */
+    .swatches{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+    .swatch{
+      width:140px;
+      height:110px;
+      border-radius:12px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      color:#fff;
+      font-weight:700;
+      box-shadow:0 8px 24px rgba(0,0,0,0.15);
+      transition:transform 0.3s ease, box-shadow 0.3s ease;
+      position:relative;
+      overflow:hidden;
+    }
+    .swatch::before{
+      content:'';
+      position:absolute;
+      inset:0;
+      background:linear-gradient(135deg, transparent, rgba(255,255,255,0.1));
+      opacity:0;
+      transition:opacity 0.3s ease;
+    }
+    .swatch:hover{
+      transform:translateY(-6px) scale(1.05);
+      box-shadow:0 12px 32px rgba(0,0,0,0.25);
+    }
+    .swatch:hover::before{opacity:1}
+    .swatch small{font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px}
+    .swatch .code{font-size:13px;opacity:0.95;font-family:monospace}
+
+    /* --------------------
+       Buttons
+       -------------------- */
+    .btn{
+      display:inline-block;
+      padding:12px 24px;
+      border-radius:12px;
+      border:none;
+      font-weight:700;
+      cursor:pointer;
+      transition:all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position:relative;
+      overflow:hidden;
+      font-size:14px;
+    }
+    .btn::before{
+      content:'';
+      position:absolute;
+      inset:0;
+      background:linear-gradient(135deg, rgba(255,255,255,0.2), transparent);
+      opacity:0;
+      transition:opacity 0.3s ease;
+    }
+    .btn:hover::before{opacity:1}
+    .btn:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,0.15)}
+    .btn:active{transform:translateY(0)}
+    .btn-primary{
+      background:linear-gradient(135deg, var(--primary-red), var(--dark-red));
+      color:#fff;
+      box-shadow:0 8px 20px rgba(139,30,30,0.25);
+    }
+    .btn-primary:focus{outline:3px solid rgba(139,30,30,0.2)}
+    .btn-ghost{
+      background:transparent;
+      border:2px solid rgba(139,30,30,0.2);
+      color:var(--primary-red);
+      backdrop-filter:blur(10px);
+    }
+    .btn-ghost:hover{background:rgba(139,30,30,0.05);border-color:var(--primary-red)}
+    .btn-alt{background:#fff;border:1px solid #e5e5e5;color:var(--text)}
+    .btn-alt:hover{background:#f9f9f9;border-color:#d0d0d0}
+    .btn-danger{background:linear-gradient(135deg, #d9534f, #c9302c);color:#fff}
+    .btn-round{border-radius:999px;padding:10px 20px}
+    .btn-sm{padding:8px 16px;font-size:13px}
+    .btn-disabled{background:#e5e5e5;color:#999;cursor:not-allowed;box-shadow:none}
+
+    /* --------------------
+       Inputs & forms
+       -------------------- */
+    .form-row{display:flex;gap:12px;align-items:center}
+    label{
+      display:block;
+      font-weight:700;
+      margin-bottom:8px;
+      color:var(--text);
+      font-size:14px;
+    }
+    input[type=text],input[type=date],select,textarea{
+      width:100%;
+      padding:12px 16px;
+      border-radius:12px;
+      border:2px solid #e8e8e8;
+      background:#fff;
+      transition:all 0.3s ease;
+      font-family:var(--mono);
+    }
+    input:focus,select:focus,textarea:focus{
+      outline:none;
+      border-color:var(--primary-red);
+      box-shadow:0 0 0 4px rgba(139,30,30,0.1);
+      transform:translateY(-1px);
+    }
+    .file{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 16px;
+      border-radius:12px;
+      background:#fff;
+      border:2px dashed #d5d5d5;
+      cursor:pointer;
+      transition:all 0.3s ease;
+    }
+    .file:hover{border-color:var(--primary-red);background:#fafafa}
+
+    /* --------------------
+       Table
+       -------------------- */
+    table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
+      border-radius:12px;
+      overflow:hidden;
+      box-shadow:0 4px 12px rgba(0,0,0,0.05);
+    }
+    th,td{padding:14px 16px;text-align:left}
+    th{
+      background:linear-gradient(135deg,var(--primary-red),var(--dark-red));
+      color:#fff;
+      font-weight:800;
+      text-transform:uppercase;
+      font-size:12px;
+      letter-spacing:0.5px;
+    }
+    tbody tr{transition:all 0.2s ease}
+    tbody tr:nth-child(even){background:rgba(0,0,0,0.02)}
+    tbody tr:hover{background:linear-gradient(90deg,rgba(139,30,30,0.05),transparent);transform:scale(1.01)}
+    tbody td{border-bottom:1px solid #f0f0f0}
+    .table-foot{font-weight:800;text-align:right;padding:16px;background:rgba(0,0,0,0.02);margin-top:12px;border-radius:8px}
+
+    /* --------------------
+       Status badges & tags
+       -------------------- */
+    .badge{
+      display:inline-block;
+      padding:6px 14px;
+      border-radius:999px;
+      font-weight:800;
+      font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:0.3px;
+      box-shadow:0 2px 8px rgba(0,0,0,0.1);
+      transition:transform 0.2s ease;
+    }
+    .badge:hover{transform:scale(1.05)}
+    .badge.approved{background:linear-gradient(135deg, var(--accent-green), #20c997);color:#fff}
+    .badge.pending{background:linear-gradient(135deg, var(--accent-yellow), #ffd700);color:#222}
+    .badge.info{background:linear-gradient(135deg, #67b3ff, #067bff);color:#fff}
+
+    /* --------------------
+       Alerts, toasts, tooltips
+       -------------------- */
+    .alert{
+      padding:14px 18px;
+      border-radius:12px;
+      margin-bottom:12px;
+      font-weight:700;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      animation:slideIn 0.4s ease-out;
+    }
+    @keyframes slideIn{
+      from{opacity:0;transform:translateX(-20px)}
+      to{opacity:1;transform:translateX(0)}
+    }
+    .alert.success{
+      background:linear-gradient(135deg,#eafaf0,#d4f4dd);
+      color:var(--accent-green);
+      border:2px solid rgba(40,167,69,0.2);
+    }
+    .alert.warn{
+      background:linear-gradient(135deg,#fff9e6,#ffefbf);
+      color:#d4940a;
+      border:2px solid rgba(245,197,66,0.2);
+    }
+    .alert.danger{
+      background:linear-gradient(135deg,#fff2f2,#ffe5e5);
+      color:#d04545;
+      border:2px solid rgba(208,77,77,0.15);
+    }
+
+    .toast{
+      position:fixed;
+      right:28px;
+      bottom:28px;
+      background:linear-gradient(135deg, #2d2d2d, #1a1a1a);
+      color:#fff;
+      padding:14px 20px;
+      border-radius:12px;
+      box-shadow:0 12px 32px rgba(0,0,0,0.3);
+      display:flex;
+      gap:12px;
+      align-items:center;
+      animation:toastIn 0.4s ease-out;
+    }
+    @keyframes toastIn{
+      from{opacity:0;transform:translateY(20px)}
+      to{opacity:1;transform:translateY(0)}
+    }
+
+    .tooltip{position:relative;display:inline-block}
+    .tooltip .tip{
+      position:absolute;
+      bottom:calc(100% + 10px);
+      left:50%;
+      transform:translateX(-50%);
+      background:#2d2d2d;
+      color:#fff;
+      padding:10px 14px;
+      border-radius:10px;
+      font-size:13px;
+      white-space:nowrap;
+      opacity:0;
+      pointer-events:none;
+      transition:all 0.3s ease;
+      box-shadow:0 4px 12px rgba(0,0,0,0.2);
+    }
+    .tooltip .tip::after{
+      content:'';
+      position:absolute;
+      top:100%;
+      left:50%;
+      transform:translateX(-50%);
+      border:6px solid transparent;
+      border-top-color:#2d2d2d;
+    }
+    .tooltip:hover .tip{opacity:1;transform:translateX(-50%) translateY(-6px)}
+
+    /* --------------------
+       Tabs
+       -------------------- */
+    .tabs{
+      display:flex;
+      border-radius:14px;
+      overflow:hidden;
+      background:#fff;
+      border:2px solid #f0f0f0;
+      padding:4px;
+      gap:4px;
+    }
+    .tabs button{
+      flex:1;
+      padding:12px 20px;
+      border:none;
+      background:transparent;
+      cursor:pointer;
+      font-weight:700;
+      border-radius:10px;
+      transition:all 0.3s ease;
+    }
+    .tabs button:hover{background:#f5f5f5}
+    .tabs button.active{
+      background:linear-gradient(135deg,var(--primary-red),var(--dark-red));
+      color:#fff;
+      box-shadow:0 4px 12px rgba(139,30,30,0.25);
+    }
+
+    /* --------------------
+       Pagination
+       -------------------- */
+    .pagination{display:flex;gap:8px;align-items:center}
+    .page{
+      padding:10px 14px;
+      background:#fff;
+      border-radius:10px;
+      border:2px solid #f0f0f0;
+      cursor:pointer;
+      font-weight:700;
+      transition:all 0.3s ease;
+    }
+    .page:hover{background:#f8f8f8;border-color:#d0d0d0;transform:translateY(-2px)}
+    .page.active{
+      background:linear-gradient(135deg,var(--primary-red),var(--dark-red));
+      color:#fff;
+      border-color:transparent;
+      box-shadow:0 4px 12px rgba(139,30,30,0.25);
+    }
+
+    /* --------------------
+       Modal
+       -------------------- */
+    .modal-backdrop{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,0.6);
+      backdrop-filter:blur(8px);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .modal{
+      width:640px;
+      background:var(--bg-soft);
+      backdrop-filter:var(--glass-blur);
+      padding:28px;
+      border-radius:20px;
+      box-shadow:0 20px 60px rgba(0,0,0,0.3);
+      border:1px solid var(--glass-border);
+    }
+    .modal .modal-head{display:flex;align-items:center;justify-content:space-between}
+    .modal .modal-head h3{margin:0;font-size:20px}
+
+    /* --------------------
+       Sidebar preview
+       -------------------- */
+    .sidebar{
+      width:240px;
+      background:linear-gradient(135deg,var(--primary-red),var(--dark-red));
+      color:#fff;
+      padding:24px;
+      border-radius:16px;
+      box-shadow:0 8px 24px rgba(139,30,30,0.25);
+    }
+    .sidebar ul{list-style:none;padding:0;margin:16px 0 0}
+    .sidebar li{
+      padding:12px 0;
+      font-weight:700;
+      opacity:0.9;
+      transition:all 0.2s ease;
+      cursor:pointer;
+    }
+    .sidebar li:hover{opacity:1;transform:translateX(4px)}
+
+    /* --------------------
+       Misc
+       -------------------- */
+    pre{
+      background:#f8f9fa;
+      padding:16px;
+      border-radius:12px;
+      overflow:auto;
+      border:2px solid #f0f0f0;
+      font-size:13px;
+    }
+    .muted{color:var(--muted);font-weight:600}
+
+    @media (max-width:900px){
+      .row{flex-direction:column}
+      h1{font-size:32px}
+      section{padding:20px}
+    }
+  </style>
+</head>
+<body>
+  <h1>Digital Claim System — Style Guide</h1>
+
+  <section>
+    <h2>Brand Colors</h2>
+    <div class="row">
+      <div class="col swatches">
+        <div class="swatch" style="background:linear-gradient(135deg, var(--primary-red), var(--dark-red))">
+          <small>Primary</small>
+          <div class="code">#8B1E1E</div>
+        </div>
+        <div class="swatch" style="background:linear-gradient(135deg, var(--dark-red), #5a1414)">
+          <small>Dark</small>
+          <div class="code">#6D1818</div>
+        </div>
+        <div class="swatch" style="background:linear-gradient(135deg, var(--accent-green), #20c997)">
+          <small>Approved</small>
+          <div class="code">#28A745</div>
+        </div>
+        <div class="swatch" style="background:linear-gradient(135deg, var(--accent-yellow), #ffd700);color:#222">
+          <small>Pending</small>
+          <div class="code">#F5C542</div>
+        </div>
+      </div>
+      <div class="col">
+        <p class="muted">Usage: Primary red for main actions & sidebar. Green for success/approved, yellow for pending/warning. Keep neutrals for forms and table background.</p>
+        <pre>CSS tokens:
+--primary-red: #8b1e1e
+--accent-green: #28a745
+--accent-yellow: #f5c542</pre>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Typography & Sizes</h2>
+    <div class="row">
+      <div class="col">
+        <h3>Headlines</h3>
+        <p style="font-size:24px;font-weight:800">H2 — 24px / Bold</p>
+        <p style="font-size:18px;font-weight:700">H3 — 18px / Semibold</p>
+      </div>
+      <div class="col">
+        <h3>Body</h3>
+        <p style="font-size:14px">Body — 14px / Regular</p>
+        <p class="muted">Small / helper text — 12px</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Buttons Gallery</h2>
+    <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center">
+      <button class="btn btn-primary">Primary</button>
+      <button class="btn btn-primary btn-sm">Primary small</button>
+      <button class="btn btn-ghost">Ghost</button>
+      <button class="btn btn-alt">Alt</button>
+      <button class="btn btn-danger">Danger</button>
+      <button class="btn btn-round">Round</button>
+      <button class="btn btn-disabled" disabled>Disabled</button>
+      <div style="margin-left:18px" class="tooltip"><button class="btn btn-alt">Hover me</button><div class="tip">Tooltip example</div></div>
+    </div>
+
+    <div style="margin-top:16px">
+      <p class="muted">Example usage:</p>
+      <pre>&lt;button class="btn btn-primary"&gt;Submit Claim&lt;/button&gt;</pre>
+    </div>
+  </section>
+
+  <section>
+    <h2>Form Components</h2>
+    <div class="row">
+      <div class="col">
+        <label>Email</label>
+        <input type="text" placeholder="fatin@example.com"/>
+        <div style="height:16px"></div>
+        <label>Amount</label>
+        <input type="text" placeholder="RM 0.00"/>
+        <div style="height:16px"></div>
+        <label>Receipt</label>
+        <div class="file">📎 Choose file</div>
+      </div>
+      <div class="col">
+        <label>Text area</label>
+        <textarea rows="5" style="width:100%;padding:12px 16px;border-radius:12px;border:2px solid #e8e8e8"></textarea>
+
+        <div style="margin-top:14px">
+          <label>Switch</label>
+          <div style="display:flex;gap:10px;align-items:center;margin-top:8px">
+            <div style="width:52px;height:28px;border-radius:99px;background:linear-gradient(135deg, var(--primary-red), var(--dark-red));position:relative;padding:3px;cursor:pointer;box-shadow:0 4px 12px rgba(139,30,30,0.25)"><div style="width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,0.15);transition:transform 0.3s ease;transform:translateX(24px)"></div></div>
+            <span class="muted">Enable notifications</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Table / Data Display</h2>
+    <table>
+      <thead>
+        <tr><th>Date Submitted</th><th>Category</th><th>Amount (MYR)</th><th>Status</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>2025-05-20</td><td>Entertainment</td><td>820.00</td><td><span class="badge approved">APPROVED</span></td></tr>
+        <tr><td>2025-04-21</td><td>Petrol</td><td>300.00</td><td><span class="badge approved">APPROVED</span></td></tr>
+        <tr><td>2025-04-18</td><td>Phone Bill</td><td>200.00</td><td><span class="badge pending">PENDING</span></td></tr>
+      </tbody>
+    </table>
+    <div class="table-foot">Total Claim: <strong>RM 1,320.00</strong></div>
+  </section>
+
+  <section>
+    <h2>Alerts, Toasts & Notifications</h2>
+    <div class="alert success"><span style="font-size:18px">✔</span> Claim submitted successfully</div>
+    <div class="alert warn"><span style="font-size:18px">⚠</span> Receipt missing — upload to proceed</div>
+    <div class="alert danger"><span style="font-size:18px">✖</span> Claim rejected — refer to admin</div>
+
+    <div style="margin-top:16px">Floating toast (example): <div class="toast" style="position:static;display:inline-flex;margin-left:10px">✔ Saved</div></div>
+  </section>
+
+  <section>
+    <h2>Tabs, Pagination & Navigation</h2>
+    <div style="margin-bottom:16px">
+      <div class="tabs">
+        <button class="active">Dashboard</button>
+        <button>New Claim</button>
+        <button>Submitted</button>
+        <button>Settings</button>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:16px">
+      <div class="pagination"><div class="page">«</div><div class="page active">1</div><div class="page">2</div><div class="page">3</div><div class="page">»</div></div>
+      <div class="muted">Showing 1–10 of 32</div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Modal Example</h2>
+    <div style="display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap">
+      <div class="card" style="flex:1;min-width:300px">
+        <p class="muted">Click to preview modal layout (static in guide)</p>
+        <div class="modal" style="position:relative;display:block">
+          <div class="modal-head">
+            <h3 style="margin:0">Section D: Petrol</h3>
+            <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg, #2d2d2d, #1a1a1a);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:24px">×</div>
+          </div>
+          <div style="margin-top:16px;display:flex;gap:12px">
+            <div style="flex:1">
+              <label>Date</label>
+              <input type="date" />
+            </div>
+            <div style="width:140px">
+              <label>Amount</label>
+              <input type="text" placeholder="RM 0.00" />
+            </div>
+          </div>
+          <div style="margin-top:16px;display:flex;justify-content:center">
+            <button class="btn btn-primary">Submit Claim</button>
+          </div>
+        </div>
+      </div>
+
+      <div style="width:240px">
+        <div class="sidebar">
+          <h3 style="margin:0;font-size:18px;letter-spacing:1px">DIGITAL<br/>CLAIM</h3>
+          <ul>
+            <li>🏠 Dashboard</li>
+            <li>📝 New Claim</li>
+            <li>📑 Submitted</li>
+            <li>⚙ Settings</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Small Components & Utilities</h2>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+      <span class="badge approved">APPROVED</span>
+      <span class="badge pending">PENDING</span>
+      <span class="badge info">INFO</span>
+      <div style="padding:10px 16px;border-radius:10px;background:#fff;border:2px solid #f0f0f0;font-weight:600">Avatar • Circle</div>
+      <div style="padding:10px 16px;border-radius:10px;background:#fff;border:2px solid #f0f0f0;font-weight:600">Chip • Client Parking</div>
+      <div class="tooltip" style="margin-left:12px"><span style="padding:8px 14px;border-radius:8px;background:#fff;border:2px solid #f0f0f0;font-weight:600;cursor:pointer">Hover</span>
+        <div class="tip">This is a tooltip showing helpful context</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Login Form Preview</h2>
+    <div style="display:flex;gap:24px;align-items:center;flex-wrap:wrap">
+      <div style="flex:1;min-width:300px">
+        <div style="width:100%;max-width:520px;margin:0 auto;padding:28px;border-radius:16px;background:var(--bg-soft);box-shadow:var(--shadow);border:1px solid var(--glass-border)">
+          <h2 style="margin-top:0;color:var(--primary-red);font-size:26px">Login to your account</h2>
+          <label>Email Address</label>
+          <input type="text" placeholder="you@example.com" />
+          <label style="margin-top:14px">Password</label>
+          <input type="text" placeholder="●●●●●●" />
+          <div style="display:flex;justify-content:flex-end;margin-top:10px"><a href="#" class="muted" style="text-decoration:none">Forgot password?</a></div>
+          <div style="text-align:center;margin-top:16px"><button class="btn btn-primary">Sign in</button></div>
+        </div>
+      </div>
+
+      <div style="width:280px">
+        <div style="padding:16px;border-radius:12px;backgroun

@@ -148,7 +148,7 @@
                             </div>
                         </div>
 
-                        <div id="receipt-preview" class="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div id="receipt-preview" class="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 hidden">
                             <!-- Uploaded files will be displayed here -->
                         </div>
                     </div>
@@ -415,17 +415,17 @@
                                 <input type="text" id="vehicle_details" name="category_data[vehicle_details]"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                     placeholder="Enter make, model, and plate number"
-                                    value="${window.oldFormData.vehicle_details || ''}">
+                                    value="${window.oldFormData['category_data']?.vehicle_details || ''}">
                             </div>
                             <div>
                                 <label for="fuel_type" class="block text-sm font-medium text-gray-700">Fuel Type *</label>
                                 <select id="fuel_type" name="category_data[fuel_type]"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                                     <option value="">Select fuel type...</option>
-                                    <option value="petrol" ${window.oldFormData.fuel_type == 'petrol' ? 'selected' : ''}>Petrol</option>
-                                    <option value="diesel" ${window.oldFormData.fuel_type == 'diesel' ? 'selected' : ''}>Diesel</option>
-                                    <option value="hybrid" ${window.oldFormData.fuel_type == 'hybrid' ? 'selected' : ''}>Hybrid</option>
-                                    <option value="electric" ${window.oldFormData.fuel_type == 'electric' ? 'selected' : ''}>Electric</option>
+                                    <option value="petrol" ${window.oldFormData['category_data']?.fuel_type == 'petrol' ? 'selected' : ''}>Petrol</option>
+                                    <option value="diesel" ${window.oldFormData['category_data']?.fuel_type == 'diesel' ? 'selected' : ''}>Diesel</option>
+                                    <option value="hybrid" ${window.oldFormData['category_data']?.fuel_type == 'hybrid' ? 'selected' : ''}>Hybrid</option>
+                                    <option value="electric" ${window.oldFormData['category_data']?.fuel_type == 'electric' ? 'selected' : ''}>Electric</option>
                                 </select>
                             </div>
                         </div>
@@ -435,21 +435,21 @@
                                 <input type="number" id="odometer_start" name="category_data[odometer_start]"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                     placeholder="Starting odometer"
-                                    value="${window.oldFormData.odometer_start || ''}">
+                                    value="${window.oldFormData['category_data']?.odometer_start || ''}">
                             </div>
                             <div>
                                 <label for="odometer_end" class="block text-sm font-medium text-gray-700">Odometer End Reading *</label>
                                 <input type="number" id="odometer_end" name="category_data[odometer_end]"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                     placeholder="Ending odometer"
-                                    value="${window.oldFormData.odometer_end || ''}">
+                                    value="${window.oldFormData['category_data']?.odometer_end || ''}">
                             </div>
                             <div>
                                 <label for="purchase_date" class="block text-sm font-medium text-gray-700">Purchase Date *</label>
                                 <input type="date" id="purchase_date" name="category_data[purchase_date]"
                                     max="{{ now()->format('Y-m-d') }}"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                    value="${window.oldFormData.purchase_date || ''}">
+                                    value="${window.oldFormData['category_data']?.purchase_date || ''}">
                             </div>
                         </div>
                         <div class="mt-4">
@@ -457,7 +457,7 @@
                             <input type="text" id="station_name" name="category_data[station_name]"
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                 placeholder="Enter petrol station name"
-                                value="${window.oldFormData.station_name || ''}">
+                                value="${window.oldFormData['category_data']?.station_name || ''}">
                         </div>
                     `;
                 } else if (categoryId == '23') { // Toll
@@ -468,14 +468,14 @@
                                 <input type="text" id="route_from" name="category_data[route_from]"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                     placeholder="Enter starting point"
-                                    value="${window.oldFormData.route_from || ''}">
+                                    value="${window.oldFormData['category_data']?.route_from || ''}">
                             </div>
                             <div>
                                 <label for="route_to" class="block text-sm font-medium text-gray-700">Route To *</label>
                                 <input type="text" id="route_to" name="category_data[route_to]"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                     placeholder="Enter destination"
-                                    value="${window.oldFormData.route_to || ''}">
+                                    value="${window.oldFormData['category_data']?.route_to || ''}">
                             </div>
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
@@ -484,14 +484,14 @@
                                 <input type="text" id="toll_plaza_name" name="category_data[toll_plaza_name]"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                     placeholder="Enter toll plaza name"
-                                    value="${window.oldFormData.toll_plaza_name || ''}">
+                                    value="${window.oldFormData['category_data']?.toll_plaza_name || ''}">
                             </div>
                             <div>
                                 <label for="travel_date" class="block text-sm font-medium text-gray-700">Travel Date *</label>
                                 <input type="date" id="travel_date" name="category_data[travel_date]"
                                     max="{{ now()->format('Y-m-d') }}"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                    value="${window.oldFormData.travel_date || ''}">
+                                    value="${window.oldFormData['category_data']?.travel_date || ''}">
                             </div>
                         </div>
                         <div class="mt-4">
@@ -499,11 +499,11 @@
                             <select id="vehicle_type" name="category_data[vehicle_type]"
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                                 <option value="">Select vehicle type...</option>
-                                <option value="motorcycle" ${window.oldFormData.vehicle_type == 'motorcycle' ? 'selected' : ''}>Motorcycle</option>
-                                <option value="car" ${window.oldFormData.vehicle_type == 'car' ? 'selected' : ''}>Car</option>
-                                <option value="van" ${window.oldFormData.vehicle_type == 'van' ? 'selected' : ''}>Van</option>
-                                <option value="truck" ${window.oldFormData.vehicle_type == 'truck' ? 'selected' : ''}>Truck</option>
-                                <option value="other" ${window.oldFormData.vehicle_type == 'other' ? 'selected' : ''}>Other</option>
+                                <option value="motorcycle" ${window.oldFormData['category_data']?.vehicle_type == 'motorcycle' ? 'selected' : ''}>Motorcycle</option>
+                                <option value="car" ${window.oldFormData['category_data']?.vehicle_type == 'car' ? 'selected' : ''}>Car</option>
+                                <option value="van" ${window.oldFormData['category_data']?.vehicle_type == 'van' ? 'selected' : ''}>Van</option>
+                                <option value="truck" ${window.oldFormData['category_data']?.vehicle_type == 'truck' ? 'selected' : ''}>Truck</option>
+                                <option value="other" ${window.oldFormData['category_data']?.vehicle_type == 'other' ? 'selected' : ''}>Other</option>
                             </select>
                         </div>
                     `;
@@ -515,14 +515,14 @@
                                 <input type="text" id="service_provider" name="category_data[service_provider]"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                     placeholder="Enter telecom provider name"
-                                    value="${window.oldFormData.service_provider || ''}">
+                                    value="${window.oldFormData['category_data']?.service_provider || ''}">
                             </div>
                             <div>
                                 <label for="account_number" class="block text-sm font-medium text-gray-700">Account Number *</label>
                                 <input type="text" id="account_number" name="category_data[account_number]"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                     placeholder="Enter account or phone number"
-                                    value="${window.oldFormData.account_number || ''}">
+                                    value="${window.oldFormData['category_data']?.account_number || ''}">
                             </div>
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
@@ -531,14 +531,14 @@
                                 <input type="date" id="billing_period_start" name="category_data[billing_period_start]"
                                     max="{{ now()->format('Y-m-d') }}"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                    value="${window.oldFormData.billing_period_start || ''}">
+                                    value="${window.oldFormData['category_data']?.billing_period_start || ''}">
                             </div>
                             <div>
                                 <label for="billing_period_end" class="block text-sm font-medium text-gray-700">Billing Period End *</label>
                                 <input type="date" id="billing_period_end" name="category_data[billing_period_end]"
                                     max="{{ now()->format('Y-m-d') }}"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                    value="${window.oldFormData.billing_period_end || ''}">
+                                    value="${window.oldFormData['category_data']?.billing_period_end || ''}">
                             </div>
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
@@ -547,17 +547,17 @@
                                 <input type="number" id="business_usage_percentage" name="category_data[business_usage_percentage]" min="0" max="100" step="1"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                     placeholder="Enter percentage (0-100)"
-                                    value="${window.oldFormData.business_usage_percentage || ''}">
+                                    value="${window.oldFormData['category_data']?.business_usage_percentage || ''}">
                             </div>
                             <div>
                                 <label for="plan_type" class="block text-sm font-medium text-gray-700">Plan Type *</label>
                                 <select id="plan_type" name="category_data[plan_type]"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                                     <option value="">Select plan type...</option>
-                                    <option value="prepaid" ${window.oldFormData.plan_type == 'prepaid' ? 'selected' : ''}>Prepaid</option>
-                                    <option value="postpaid" ${window.oldFormData.plan_type == 'postpaid' ? 'selected' : ''}>Postpaid</option>
-                                    <option value="corporate" ${window.oldFormData.plan_type == 'corporate' ? 'selected' : ''}>Corporate</option>
-                                    <option value="other" ${window.oldFormData.plan_type == 'other' ? 'selected' : ''}>Other</option>
+                                    <option value="prepaid" ${window.oldFormData['category_data']?.plan_type == 'prepaid' ? 'selected' : ''}>Prepaid</option>
+                                    <option value="postpaid" ${window.oldFormData['category_data']?.plan_type == 'postpaid' ? 'selected' : ''}>Postpaid</option>
+                                    <option value="corporate" ${window.oldFormData['category_data']?.plan_type == 'corporate' ? 'selected' : ''}>Corporate</option>
+                                    <option value="other" ${window.oldFormData['category_data']?.plan_type == 'other' ? 'selected' : ''}>Other</option>
                                 </select>
                             </div>
                         </div>
@@ -570,17 +570,16 @@
                                 <input type="text" id="parking_location" name="category_data[parking_location]"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                     placeholder="Enter parking location details"
-                                    value="${window.oldFormData.parking_location || ''}">
+                                    value="${window.oldFormData['category_data']?.parking_location || ''}">
                             </div>
                             <div>
-                                <label for="parking_type" class="block text-sm font-medium text-gray-700">Parking Type *</label>
-                                <select id="parking_type" name="category_data[parking_type]"
+                                <label for="parking_duration" class="block text-sm font-medium text-gray-700">Parking Duration *</label>
+                                <select id="parking_duration" name="category_data[parking_duration]"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                                    <option value="">Select parking type...</option>
-                                    <option value="daily" ${window.oldFormData.parking_type == 'daily' ? 'selected' : ''}>Daily</option>
-                                    <option value="weekly" ${window.oldFormData.parking_type == 'weekly' ? 'selected' : ''}>Weekly</option>
-                                    <option value="monthly" ${window.oldFormData.parking_type == 'monthly' ? 'selected' : ''}>Monthly</option>
-                                    <option value="season" ${window.oldFormData.parking_type == 'season' ? 'selected' : ''}>Seasonal</option>
+                                    <option value="">Select duration...</option>
+                                    <option value="daily" ${window.oldFormData['category_data']?.parking_duration == 'daily' ? 'selected' : ''}>Daily</option>
+                                    <option value="weekly" ${window.oldFormData['category_data']?.parking_duration == 'weekly' ? 'selected' : ''}>Weekly</option>
+                                    <option value="monthly" ${window.oldFormData['category_data']?.parking_duration == 'monthly' ? 'selected' : ''}>Monthly</option>
                                 </select>
                             </div>
                         </div>
@@ -590,22 +589,25 @@
                                 <input type="date" id="start_date" name="category_data[start_date]"
                                     max="{{ now()->format('Y-m-d') }}"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                    value="${window.oldFormData.start_date || ''}">
+                                    value="${window.oldFormData['category_data']?.start_date || ''}">
                             </div>
                             <div>
                                 <label for="end_date" class="block text-sm font-medium text-gray-700">End Date</label>
                                 <input type="date" id="end_date" name="category_data[end_date]"
                                     max="{{ now()->format('Y-m-d') }}"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                    value="${window.oldFormData.end_date || ''}">
+                                    value="${window.oldFormData['category_data']?.end_date || ''}">
                             </div>
                         </div>
                         <div class="mt-4">
-                            <label for="parking_duration" class="block text-sm font-medium text-gray-700">Duration Description</label>
-                            <input type="text" id="parking_duration" name="category_data[parking_duration]"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                placeholder="e.g., 22 working days, 1 month, etc."
-                                value="${window.oldFormData.parking_duration || ''}">
+                            <label for="parking_type" class="block text-sm font-medium text-gray-700">Parking Type</label>
+                            <select id="parking_type" name="category_data[parking_type]"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                <option value="">Select parking type...</option>
+                                <option value="covered" ${window.oldFormData['category_data']?.parking_type == 'covered' ? 'selected' : ''}>Covered</option>
+                                <option value="open" ${window.oldFormData['category_data']?.parking_type == 'open' ? 'selected' : ''}>Open</option>
+                                <option value="seasonal" ${window.oldFormData['category_data']?.parking_type == 'seasonal' ? 'selected' : ''}>Seasonal</option>
+                            </select>
                         </div>
                     `;
                 } else if (categoryId == '26') { // Client Parking
@@ -666,14 +668,14 @@
                                 <input type="text" id="medical_provider" name="category_data[medical_provider]"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                     placeholder="Enter hospital or clinic name"
-                                    value="${window.oldFormData.medical_provider || ''}">
+                                    value="${window.oldFormData['category_data']?.medical_provider || ''}">
                             </div>
                             <div>
                                 <label for="patient_name" class="block text-sm font-medium text-gray-700">Patient Name *</label>
                                 <input type="text" id="patient_name" name="category_data[patient_name]"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                     placeholder="Enter patient name"
-                                    value="${window.oldFormData.patient_name || ''}">
+                                    value="${window.oldFormData['category_data']?.patient_name || ''}">
                             </div>
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
@@ -682,12 +684,12 @@
                                 <select id="treatment_type" name="category_data[treatment_type]"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                                     <option value="">Select treatment type...</option>
-                                    <option value="consultation" ${window.oldFormData.treatment_type == 'consultation' ? 'selected' : ''}>Consultation</option>
-                                    <option value="treatment" ${window.oldFormData.treatment_type == 'treatment' ? 'selected' : ''}>Treatment</option>
-                                    <option value="surgery" ${window.oldFormData.treatment_type == 'surgery' ? 'selected' : ''}>Surgery</option>
-                                    <option value="medication" ${window.oldFormData.treatment_type == 'medication' ? 'selected' : ''}>Medication</option>
-                                    <option value="therapy" ${window.oldFormData.treatment_type == 'therapy' ? 'selected' : ''}>Therapy</option>
-                                    <option value="other" ${window.oldFormData.treatment_type == 'other' ? 'selected' : ''}>Other</option>
+                                    <option value="consultation" ${window.oldFormData['category_data']?.treatment_type == 'consultation' ? 'selected' : ''}>Consultation</option>
+                                    <option value="treatment" ${window.oldFormData['category_data']?.treatment_type == 'treatment' ? 'selected' : ''}>Treatment</option>
+                                    <option value="surgery" ${window.oldFormData['category_data']?.treatment_type == 'surgery' ? 'selected' : ''}>Surgery</option>
+                                    <option value="medication" ${window.oldFormData['category_data']?.treatment_type == 'medication' ? 'selected' : ''}>Medication</option>
+                                    <option value="therapy" ${window.oldFormData['category_data']?.treatment_type == 'therapy' ? 'selected' : ''}>Therapy</option>
+                                    <option value="other" ${window.oldFormData['category_data']?.treatment_type == 'other' ? 'selected' : ''}>Other</option>
                                 </select>
                             </div>
                             <div>
@@ -695,23 +697,24 @@
                                 <input type="date" id="treatment_date" name="category_data[treatment_date]"
                                     max="{{ now()->format('Y-m-d') }}"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                    value="${window.oldFormData.treatment_date || ''}">
+                                    value="${window.oldFormData['category_data']?.treatment_date || ''}">
                             </div>
                         </div>
                         <div class="mt-4">
                             <label for="medical_condition" class="block text-sm font-medium text-gray-700">Medical Condition *</label>
                             <textarea id="medical_condition" name="category_data[medical_condition]" rows="2"
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                placeholder="Describe the medical condition or symptoms...">${window.oldFormData.medical_condition || ''}</textarea>
+                                placeholder="Describe the medical condition or symptoms...">${window.oldFormData['category_data']?.medical_condition || ''}</textarea>
                         </div>
                         <div class="mt-4">
                             <label for="prescription_required" class="block text-sm font-medium text-gray-700">Prescription Required?</label>
-                            <select id="prescription_required" name="category_data[prescription_required]"
+                            <select id="prescription_required_select"
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                                 <option value="">Select...</option>
-                                <option value="yes" ${window.oldFormData.prescription_required == 'yes' ? 'selected' : ''}>Yes</option>
-                                <option value="no" ${window.oldFormData.prescription_required == 'no' ? 'selected' : ''}>No</option>
+                                <option value="1" ${window.oldFormData['category_data']?.prescription_required === true || window.oldFormData['category_data']?.prescription_required === '1' ? 'selected' : ''}>Yes</option>
+                                <option value="0" ${window.oldFormData['category_data']?.prescription_required === false || window.oldFormData['category_data']?.prescription_required === '0' ? 'selected' : ''}>No</option>
                             </select>
+                            <input type="hidden" id="prescription_required" name="category_data[prescription_required]" value="">
                         </div>
                     `;
                 } else if (categoryId == '28') { // Other Claims
@@ -722,13 +725,13 @@
                                 <select id="expense_type" name="category_data[expense_type]"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                                     <option value="">Select expense type...</option>
-                                    <option value="supplies" ${window.oldFormData.expense_type == 'supplies' ? 'selected' : ''}>Office Supplies</option>
-                                    <option value="software" ${window.oldFormData.expense_type == 'software' ? 'selected' : ''}>Software/License</option>
-                                    <option value="maintenance" ${window.oldFormData.expense_type == 'maintenance' ? 'selected' : ''}>Maintenance</option>
-                                    <option value="utilities" ${window.oldFormData.expense_type == 'utilities' ? 'selected' : ''}>Utilities</option>
-                                    <option value="professional_fees" ${window.oldFormData.expense_type == 'professional_fees' ? 'selected' : ''}>Professional Fees</option>
-                                    <option value="insurance" ${window.oldFormData.expense_type == 'insurance' ? 'selected' : ''}>Insurance</option>
-                                    <option value="other" ${window.oldFormData.expense_type == 'other' ? 'selected' : ''}>Other</option>
+                                    <option value="supplies" ${window.oldFormData['category_data']?.expense_type == 'supplies' ? 'selected' : ''}>Office Supplies</option>
+                                    <option value="software" ${window.oldFormData['category_data']?.expense_type == 'software' ? 'selected' : ''}>Software/License</option>
+                                    <option value="maintenance" ${window.oldFormData['category_data']?.expense_type == 'maintenance' ? 'selected' : ''}>Maintenance</option>
+                                    <option value="utilities" ${window.oldFormData['category_data']?.expense_type == 'utilities' ? 'selected' : ''}>Utilities</option>
+                                    <option value="professional_fees" ${window.oldFormData['category_data']?.expense_type == 'professional_fees' ? 'selected' : ''}>Professional Fees</option>
+                                    <option value="insurance" ${window.oldFormData['category_data']?.expense_type == 'insurance' ? 'selected' : ''}>Insurance</option>
+                                    <option value="other" ${window.oldFormData['category_data']?.expense_type == 'other' ? 'selected' : ''}>Other</option>
                                 </select>
                             </div>
                             <div>
@@ -736,7 +739,7 @@
                                 <input type="text" id="supplier_name" name="category_data[supplier_name]"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                     placeholder="Enter supplier or vendor name"
-                                    value="${window.oldFormData.supplier_name || ''}">
+                                    value="${window.oldFormData['category_data']?.supplier_name || ''}">
                             </div>
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
@@ -745,20 +748,20 @@
                                 <input type="date" id="purchase_date" name="category_data[purchase_date]"
                                     max="{{ now()->format('Y-m-d') }}"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                    value="${window.oldFormData.purchase_date || ''}">
+                                    value="${window.oldFormData['category_data']?.purchase_date || ''}">
                             </div>
                         </div>
                         <div class="mt-4">
                             <label for="expense_details" class="block text-sm font-medium text-gray-700">Expense Details *</label>
                             <textarea id="expense_details" name="category_data[expense_details]" rows="3"
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                placeholder="Provide detailed description of the expense...">${window.oldFormData.expense_details || ''}</textarea>
+                                placeholder="Provide detailed description of the expense...">${window.oldFormData['category_data']?.expense_details || ''}</textarea>
                         </div>
                         <div class="mt-4">
                             <label for="justification" class="block text-sm font-medium text-gray-700">Business Justification *</label>
                             <textarea id="justification" name="category_data[justification]" rows="3"
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                placeholder="Explain why this expense is necessary for business purposes...">${window.oldFormData.justification || ''}</textarea>
+                                placeholder="Explain why this expense is necessary for business purposes...">${window.oldFormData['category_data']?.justification || ''}</textarea>
                         </div>
                     `;
                 }
@@ -813,5 +816,28 @@
 
         // Set initial max amount
         updateAmountMax(document.getElementById('category_id').value);
+
+        // Handle form submission to convert boolean string values to actual booleans
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const prescriptionSelect = document.getElementById('prescription_required_select');
+            const prescriptionHidden = document.getElementById('prescription_required');
+            if (prescriptionSelect && prescriptionHidden && prescriptionSelect.value) {
+                // Submit "1" or "0" which Laravel's boolean validation will accept
+                prescriptionHidden.value = prescriptionSelect.value;
+                console.log('Prescription required value set to:', prescriptionHidden.value);
+            }
+        });
+
+        // Add change listener for the prescription select to update hidden field immediately
+        document.addEventListener('change', function(e) {
+            if (e.target && e.target.id === 'prescription_required_select') {
+                const prescriptionHidden = document.getElementById('prescription_required');
+                if (prescriptionHidden && e.target.value) {
+                    prescriptionHidden.value = e.target.value;
+                } else if (prescriptionHidden) {
+                    prescriptionHidden.value = '';
+                }
+            }
+        });
     </script>
 </x-app-layout>

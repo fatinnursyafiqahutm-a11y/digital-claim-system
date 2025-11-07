@@ -25,8 +25,11 @@ class NewClaimCategorySeeder extends Seeder
                 'description' => 'Business meals with clients, entertainment expenses, and team-building food expenses',
                 'validation_rules' => json_encode([
                     'max_amount_per_claim' => 200.00,
-                    'requires_client_name' => true,
-                    'requires_business_purpose' => true,
+                    'requires_customer_name' => true,
+                    'requires_company_name' => true,
+                    'requires_location' => true,
+                    'requires_attendees_count' => true,
+                    'requires_meeting_purpose' => true,
                     'receipt_required' => true,
                     'supported_currencies' => ['MYR', 'SGD', 'USD']
                 ]),
@@ -37,8 +40,10 @@ class NewClaimCategorySeeder extends Seeder
                 'description' => 'Hotel rooms, serviced apartments, and other lodging expenses during business travel',
                 'validation_rules' => json_encode([
                     'max_amount_per_night' => 500.00,
-                    'requires_travel_dates' => true,
+                    'requires_hotel_name' => true,
                     'requires_location' => true,
+                    'requires_check_in_date' => true,
+                    'requires_check_out_date' => true,
                     'receipt_required' => true,
                     'supported_currencies' => ['MYR', 'SGD', 'USD', 'EUR']
                 ]),
@@ -49,8 +54,11 @@ class NewClaimCategorySeeder extends Seeder
                 'description' => 'Flights, trains, buses, taxis, and other transportation expenses for business travel',
                 'validation_rules' => json_encode([
                     'max_amount_per_trip' => 2000.00,
-                    'requires_travel_dates' => true,
-                    'requires_origin_destination' => true,
+                    'requires_travel_from' => true,
+                    'requires_travel_to' => true,
+                    'requires_travel_purpose' => true,
+                    'requires_transport_mode' => true,
+                    'requires_departure_date' => true,
                     'receipt_required' => true,
                     'supported_currencies' => ['MYR', 'SGD', 'USD', 'EUR']
                 ]),
@@ -61,8 +69,12 @@ class NewClaimCategorySeeder extends Seeder
                 'description' => 'Fuel and gasoline expenses for business-related vehicle usage',
                 'validation_rules' => json_encode([
                     'max_amount_per_claim' => 300.00,
-                    'requires_odometer_reading' => true,
                     'requires_vehicle_details' => true,
+                    'requires_fuel_type' => true,
+                    'requires_odometer_start' => true,
+                    'requires_odometer_end' => true,
+                    'requires_station_name' => true,
+                    'requires_purchase_date' => true,
                     'receipt_required' => true,
                     'supported_currencies' => ['MYR']
                 ]),
@@ -73,7 +85,11 @@ class NewClaimCategorySeeder extends Seeder
                 'description' => 'Highway tolls, bridge fees, and other road usage charges for business travel',
                 'validation_rules' => json_encode([
                     'max_amount_per_claim' => 100.00,
-                    'requires_route_details' => true,
+                    'requires_route_from' => true,
+                    'requires_route_to' => true,
+                    'requires_toll_plaza_name' => true,
+                    'requires_travel_date' => true,
+                    'requires_vehicle_type' => true,
                     'receipt_required' => false, // Often no receipts for tolls
                     'supported_currencies' => ['MYR', 'SGD']
                 ]),
@@ -84,7 +100,10 @@ class NewClaimCategorySeeder extends Seeder
                 'description' => 'Mobile phone and landline bills for business communication',
                 'validation_rules' => json_encode([
                     'max_amount_per_claim' => 150.00,
-                    'requires_billing_period' => true,
+                    'requires_service_provider' => true,
+                    'requires_account_number' => true,
+                    'requires_billing_period_start' => true,
+                    'requires_billing_period_end' => true,
                     'requires_business_usage_percentage' => true,
                     'receipt_required' => true,
                     'supported_currencies' => ['MYR', 'SGD']
@@ -98,6 +117,8 @@ class NewClaimCategorySeeder extends Seeder
                     'max_amount_per_day' => 20.00,
                     'max_amount_per_month' => 400.00,
                     'requires_parking_location' => true,
+                    'requires_parking_type' => true,
+                    'requires_start_date' => true,
                     'receipt_required' => true,
                     'supported_currencies' => ['MYR', 'SGD']
                 ]),
@@ -120,8 +141,11 @@ class NewClaimCategorySeeder extends Seeder
                 'description' => 'Medical consultations, treatments, medications, and other health-related expenses',
                 'validation_rules' => json_encode([
                     'max_amount_per_claim' => 1000.00,
-                    'requires_medical_receipt' => true,
-                    'requires_treatment_details' => true,
+                    'requires_medical_provider' => true,
+                    'requires_patient_name' => true,
+                    'requires_treatment_type' => true,
+                    'requires_treatment_date' => true,
+                    'requires_medical_condition' => true,
                     'receipt_required' => true,
                     'supported_currencies' => ['MYR', 'SGD']
                 ]),
@@ -132,8 +156,11 @@ class NewClaimCategorySeeder extends Seeder
                 'description' => 'Miscellaneous business expenses not covered by other categories',
                 'validation_rules' => json_encode([
                     'max_amount_per_claim' => 500.00,
-                    'requires_detailed_description' => true,
-                    'requires_manager_approval' => true,
+                    'requires_expense_type' => true,
+                    'requires_supplier_name' => true,
+                    'requires_purchase_date' => true,
+                    'requires_expense_details' => true,
+                    'requires_justification' => true,
                     'receipt_required' => true,
                     'supported_currencies' => ['MYR', 'SGD', 'USD', 'EUR']
                 ]),

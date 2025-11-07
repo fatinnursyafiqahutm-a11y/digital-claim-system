@@ -177,5 +177,11 @@
                 </div>
             </main>
         </div>
+
+        <!-- Modal Stack -->
+        @stack('modals')
+
+        <!-- Script Stack -->
+        @stack('scripts')
     </body>
 </html>

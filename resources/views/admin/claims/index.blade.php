@@ -1,5 +1,6 @@
 <x-app-layout>
-    <div class="dashboard-card mb-8">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="dashboard-card mb-8">
         <div class="flex items-center justify-between">
             <div>
                 <h2 class="text-3xl font-bold text-gray-800 mb-2">Claims Management</h2>
@@ -126,14 +127,14 @@
     <div class="dashboard-card">
         @if ($claims->count() > 0)
             <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
+                <table class="w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-2/6">Claim Details</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/6">Employee</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/8">Employee</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/8">Category</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/8">Amount</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/8">Date</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/12">Date</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/12">Status</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/12">Actions</th>
                         </tr>
@@ -141,55 +142,50 @@
                     <tbody class="bg-white divide-y divide-gray-200">
                         @foreach ($claims as $claim)
                             <tr class="hover:bg-gray-50 {{ $claim->status == 'submitted' || $claim->status == 'under_review' ? 'bg-yellow-50' : '' }}">
-                                <td class="px-6 py-4 whitespace-nowrap">
+                                <td class="px-6 py-4 whitespace-nowrap w-2/6 text-left">
                                     <div>
                                         <div class="text-sm font-medium text-gray-900">{{ $claim->title }}</div>
                                         <div class="text-sm text-gray-500">{{ Str::limit($claim->description, 50) }}</div>
                                         <div class="text-xs text-gray-400 mt-1">ID: {{ $claim->id }}</div>
                                     </div>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="flex items-center">
-                                        <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center mr-3">
-                                            <span class="text-white text-xs font-semibold">{{ substr($claim->user->name, 0, 1) }}</span>
-                                        </div>
-                                        <div>
-                                            <div class="text-sm font-medium text-gray-900">{{ $claim->user->name }}</div>
-                                            <div class="text-xs text-gray-500">{{ $claim->user->employee_id ?? 'N/A' }}</div>
-                                        </div>
+                                <td class="px-6 py-4 whitespace-nowrap w-1/8 text-center">
+                                    <div>
+                                        <div class="text-sm font-medium text-gray-900">{{ $claim->user->name }}</div>
+                                        <div class="text-xs text-gray-500">{{ $claim->user->employee_id ?? 'N/A' }}</div>
                                     </div>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
+                                <td class="px-6 py-4 whitespace-nowrap w-1/8 text-center">
                                     <span class="text-sm text-gray-900">{{ $claim->category->display_name }}</span>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
+                                <td class="px-6 py-4 whitespace-nowrap w-1/8 text-center">
                                     <div class="text-sm font-medium text-gray-900">RM {{ number_format($claim->amount, 2) }}</div>
                                     @if ($claim->approved_amount && $claim->approved_amount != $claim->amount)
                                         <div class="text-xs text-green-600">Approved: RM {{ number_format($claim->approved_amount, 2) }}</div>
                                     @endif
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 w-1/12 text-center">
                                     {{ $claim->claim_date->format('M d, Y') }}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
+                                <td class="px-6 py-4 whitespace-nowrap w-1/12 text-center">
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $claim->formatted_status['class'] }}">
                                         {{ $claim->formatted_status['text'] }}
                                     </span>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                    <div class="flex flex-col space-y-1">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium w-1/12 text-center">
+                                    <div class="flex flex-col space-y-1 items-center">
                                         <a href="{{ route('admin.claims.show', $claim->id) }}" class="text-blue-600 hover:text-blue-900">
                                             View
                                         </a>
 
                                         @if ($claim->canBeApproved())
-                                            <button onclick="openApproveModal({{ $claim->id }}, '{{ $claim->title }}', {{ $claim->amount }})" class="text-green-600 hover:text-green-900">
+                                            <button onclick="openIndexApproveModal({{ $claim->id }}, '{{ $claim->title }}', {{ $claim->amount }})" class="text-green-600 hover:text-green-900">
                                                 Approve
                                             </button>
                                         @endif
 
                                         @if ($claim->canBeRejected())
-                                            <button onclick="openRejectModal({{ $claim->id }}, '{{ $claim->title }}')" class="text-red-600 hover:text-red-900">
+                                            <button onclick="openIndexRejectModal({{ $claim->id }}, '{{ $claim->title }}')" class="text-red-600 hover:text-red-900">
                                                 Reject
                                             </button>
                                         @endif
@@ -227,29 +223,29 @@
         @endif
     </div>
 
-    <!-- Approve Modal -->
-    <div id="approveModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+    <!-- Simple Modal System for Index Page -->
+    <div id="indexApproveModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
         <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-lg bg-white">
             <div class="mt-3">
                 <h3 class="text-lg font-semibold text-gray-900 mb-4">Approve Claim</h3>
-                <form id="approveForm" method="POST" action="">
+                <form id="indexApproveForm" method="POST" action="">
                     @csrf
-                    <input type="hidden" name="claim_id" id="approve_claim_id">
+                    <input type="hidden" name="claim_id" id="index_approve_claim_id">
 
                     <div class="mb-4">
                         <label class="form-label">Claim Title</label>
-                        <input type="text" id="approve_claim_title" readonly class="form-input bg-gray-50">
+                        <input type="text" id="index_approve_claim_title" readonly class="form-input bg-gray-50">
                     </div>
 
                     <div class="mb-4">
                         <label class="form-label">Claim Amount</label>
-                        <input type="text" id="approve_claim_amount" readonly class="form-input bg-gray-50">
+                        <input type="text" id="index_approve_claim_amount" readonly class="form-input bg-gray-50">
                     </div>
 
                     <div class="mb-4">
                         <label class="form-label" for="approved_amount">Approved Amount (RM)</label>
                         <input type="number"
-                               id="approved_amount"
+                               id="index_approved_amount"
                                name="approved_amount"
                                step="0.01"
                                min="0.01"
@@ -260,7 +256,7 @@
 
                     <div class="mb-4">
                         <label class="form-label" for="admin_notes">Admin Notes</label>
-                        <textarea id="admin_notes"
+                        <textarea id="index_admin_notes"
                                   name="admin_notes"
                                   rows="3"
                                   class="form-textarea"
@@ -268,7 +264,7 @@
                     </div>
 
                     <div class="flex justify-end space-x-3">
-                        <button type="button" onclick="closeApproveModal()" class="btn btn-ghost">
+                        <button type="button" onclick="closeIndexApproveModal()" class="btn btn-ghost">
                             Cancel
                         </button>
                         <button type="submit" class="btn btn-success">
@@ -281,23 +277,22 @@
         </div>
     </div>
 
-    <!-- Reject Modal -->
-    <div id="rejectModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+    <div id="indexRejectModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
         <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-lg bg-white">
             <div class="mt-3">
                 <h3 class="text-lg font-semibold text-gray-900 mb-4">Reject Claim</h3>
-                <form id="rejectForm" method="POST" action="">
+                <form id="indexRejectForm" method="POST" action="">
                     @csrf
-                    <input type="hidden" name="claim_id" id="reject_claim_id">
+                    <input type="hidden" name="claim_id" id="index_reject_claim_id">
 
                     <div class="mb-4">
                         <label class="form-label">Claim Title</label>
-                        <input type="text" id="reject_claim_title" readonly class="form-input bg-gray-50">
+                        <input type="text" id="index_reject_claim_title" readonly class="form-input bg-gray-50">
                     </div>
 
                     <div class="mb-4">
                         <label class="form-label" for="rejection_reason">Rejection Reason *</label>
-                        <textarea id="rejection_reason"
+                        <textarea id="index_rejection_reason"
                                   name="rejection_reason"
                                   rows="4"
                                   class="form-textarea"
@@ -306,7 +301,7 @@
                     </div>
 
                     <div class="flex justify-end space-x-3">
-                        <button type="button" onclick="closeRejectModal()" class="btn btn-ghost">
+                        <button type="button" onclick="closeIndexRejectModal()" class="btn btn-ghost">
                             Cancel
                         </button>
                         <button type="submit" class="btn btn-danger">
@@ -320,43 +315,105 @@
     </div>
 
     <script>
-        function openApproveModal(claimId, claimTitle, claimAmount) {
-            document.getElementById('approve_claim_id').value = claimId;
-            document.getElementById('approve_claim_title').value = claimTitle;
-            document.getElementById('approve_claim_amount').value = 'RM ' + claimAmount.toFixed(2);
-            document.getElementById('approveForm').action = '/admin/claims/' + claimId + '/approve';
-            document.getElementById('approveModal').classList.remove('hidden');
-        }
+        // Simple Modal System - No auto-opening issues
+        (function() {
+            'use strict';
 
-        function closeApproveModal() {
-            document.getElementById('approveModal').classList.add('hidden');
-            document.getElementById('approved_amount').value = '';
-            document.getElementById('admin_notes').value = '';
-        }
-
-        function openRejectModal(claimId, claimTitle) {
-            document.getElementById('reject_claim_id').value = claimId;
-            document.getElementById('reject_claim_title').value = claimTitle;
-            document.getElementById('rejectForm').action = '/admin/claims/' + claimId + '/reject';
-            document.getElementById('rejectModal').classList.remove('hidden');
-        }
-
-        function closeRejectModal() {
-            document.getElementById('rejectModal').classList.add('hidden');
-            document.getElementById('rejection_reason').value = '';
-        }
-
-        // Close modals when clicking outside
-        window.onclick = function(event) {
-            const approveModal = document.getElementById('approveModal');
-            const rejectModal = document.getElementById('rejectModal');
-
-            if (event.target === approveModal) {
-                closeApproveModal();
+            // Ensure modals are hidden on page load
+            function initializeModals() {
+                const modals = ['indexApproveModal', 'indexRejectModal'];
+                modals.forEach(function(modalId) {
+                    const modal = document.getElementById(modalId);
+                    if (modal && !modal.classList.contains('hidden')) {
+                        modal.classList.add('hidden');
+                    }
+                });
             }
-            if (event.target === rejectModal) {
-                closeRejectModal();
+
+            // Simple modal open function
+            window.openIndexApproveModal = function(claimId, claimTitle, claimAmount) {
+                try {
+                    document.getElementById('index_approve_claim_id').value = claimId;
+                    document.getElementById('index_approve_claim_title').value = claimTitle;
+                    document.getElementById('index_approve_claim_amount').value = 'RM ' + parseFloat(claimAmount).toFixed(2);
+                    document.getElementById('indexApproveForm').action = '/admin/claims/' + claimId + '/approve';
+                    document.getElementById('indexApproveModal').classList.remove('hidden');
+
+                    // Prevent body scroll when modal is open
+                    document.body.style.overflow = 'hidden';
+                } catch (error) {
+                    console.error('Error opening approve modal:', error);
+                }
+            };
+
+            window.openIndexRejectModal = function(claimId, claimTitle) {
+                try {
+                    document.getElementById('index_reject_claim_id').value = claimId;
+                    document.getElementById('index_reject_claim_title').value = claimTitle;
+                    document.getElementById('indexRejectForm').action = '/admin/claims/' + claimId + '/reject';
+                    document.getElementById('indexRejectModal').classList.remove('hidden');
+
+                    // Prevent body scroll when modal is open
+                    document.body.style.overflow = 'hidden';
+                } catch (error) {
+                    console.error('Error opening reject modal:', error);
+                }
+            };
+
+            // Simple modal close functions
+            window.closeIndexApproveModal = function() {
+                try {
+                    document.getElementById('indexApproveModal').classList.add('hidden');
+                    document.getElementById('index_approved_amount').value = '';
+                    document.getElementById('index_admin_notes').value = '';
+                    document.body.style.overflow = '';
+                } catch (error) {
+                    console.error('Error closing approve modal:', error);
+                }
+            };
+
+            window.closeIndexRejectModal = function() {
+                try {
+                    document.getElementById('indexRejectModal').classList.add('hidden');
+                    document.getElementById('index_rejection_reason').value = '';
+                    document.body.style.overflow = '';
+                } catch (error) {
+                    console.error('Error closing reject modal:', error);
+                }
+            };
+
+            // Close modals when clicking outside
+            window.handleModalClickOutside = function(event) {
+                const approveModal = document.getElementById('indexApproveModal');
+                const rejectModal = document.getElementById('indexRejectModal');
+
+                if (event.target === approveModal) {
+                    closeIndexApproveModal();
+                }
+                if (event.target === rejectModal) {
+                    closeIndexRejectModal();
+                }
+            };
+
+            // Close modals with Escape key
+            window.handleModalEscape = function(event) {
+                if (event.key === 'Escape') {
+                    closeIndexApproveModal();
+                    closeIndexRejectModal();
+                }
+            };
+
+            // Initialize when DOM is ready
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initializeModals);
+            } else {
+                initializeModals();
             }
-        }
+
+            // Set up global event listeners
+            document.addEventListener('click', window.handleModalClickOutside);
+            document.addEventListener('keydown', window.handleModalEscape);
+        })();
     </script>
+    </div>
 </x-app-layout>

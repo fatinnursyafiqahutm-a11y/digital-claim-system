@@ -166,8 +166,8 @@
                             <tbody class="bg-white divide-y divide-gray-200">
                                 @foreach ($claims as $claim)
                                     <tr class="hover:bg-gray-50">
-                                        <td class="px-8 py-4 whitespace-nowrap text-center">
-                                            <div class="text-left inline-block">
+                                        <td class="px-8 py-4 whitespace-nowrap text-left">
+                                            <div>
                                                 <div class="text-sm font-medium text-gray-900">{{ $claim->title }}</div>
                                                 <div class="text-sm text-gray-500">{{ Str::limit($claim->description, 50) }}</div>
                                                 <div class="text-xs text-gray-400 mt-1">ID: {{ $claim->id }}</div>

@@ -1,3 +1,344 @@
+@push('modals')
+    <!-- Approve Modal -->
+    <div id="approveModal" class="modal-backdrop hidden">
+        <div class="modal-content fade-in">
+            <div class="modal-header">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center mr-3">
+                        <i class="fas fa-check text-white"></i>
+                    </div>
+                    <h3 class="modal-title">Approve Claim</h3>
+                </div>
+                <button type="button" class="modal-close-btn" data-modal="approve">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <form method="POST" action="{{ route('admin.claims.approve', $claim->id) }}" class="modal-form">
+                @csrf
+                <div class="form-group">
+                    <label class="form-label">Claim Amount</label>
+                    <div class="form-input-readonly">
+                        <span class="text-lg font-semibold text-blue-600">RM {{ number_format($claim->amount, 2) }}</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="approved_amount">Approved Amount (RM)</label>
+                    <input type="number"
+                           name="approved_amount"
+                           step="0.01"
+                           min="0.01"
+                           max="{{ $claim->amount }}"
+                           class="form-input"
+                           placeholder="Enter approved amount">
+                    <p class="form-help">Leave blank to approve full amount</p>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="admin_notes">Admin Notes</label>
+                    <textarea name="admin_notes"
+                              rows="3"
+                              class="form-textarea"
+                              placeholder="Add any notes for the employee..."></textarea>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-ghost modal-cancel-btn" data-modal="approve">
+                        <i class="fas fa-times mr-2"></i>
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-check mr-2"></i>
+                        Approve Claim
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Reject Modal -->
+    <div id="rejectModal" class="modal-backdrop hidden">
+        <div class="modal-content fade-in">
+            <div class="modal-header">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 bg-gradient-to-br from-red-500 to-red-600 rounded-full flex items-center justify-center mr-3">
+                        <i class="fas fa-times text-white"></i>
+                    </div>
+                    <h3 class="modal-title">Reject Claim</h3>
+                </div>
+                <button type="button" class="modal-close-btn" data-modal="reject">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <form method="POST" action="{{ route('admin.claims.reject', $claim->id) }}" class="modal-form">
+                @csrf
+                <div class="form-group">
+                    <label class="form-label">Claim Title</label>
+                    <div class="form-input-readonly">
+                        <span class="text-lg font-semibold">{{ $claim->title }}</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="rejection_reason">Rejection Reason *</label>
+                    <textarea name="rejection_reason"
+                              rows="4"
+                              class="form-textarea"
+                              placeholder="Please provide a reason for rejection..."
+                              required></textarea>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-ghost modal-cancel-btn" data-modal="reject">
+                        <i class="fas fa-arrow-left mr-2"></i>
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-times mr-2"></i>
+                        Reject Claim
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+@endpush
+
+@push('scripts')
+    <script>
+        // Store modal references and ensure they're accessible
+        let approveModal = null;
+        let rejectModal = null;
+
+        // Initialize modal references when DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            approveModal = document.getElementById('approveModal');
+            rejectModal = document.getElementById('rejectModal');
+
+            // Ensure modals are hidden on page load
+            if (approveModal && !approveModal.classList.contains('hidden')) {
+                approveModal.classList.add('hidden');
+                approveModal.classList.remove('flex');
+            }
+            if (rejectModal && !rejectModal.classList.contains('hidden')) {
+                rejectModal.classList.add('hidden');
+                rejectModal.classList.remove('flex');
+            }
+
+            // Set up event listeners
+            setupModalEventListeners();
+        });
+
+        function setupModalEventListeners() {
+            // Global event listeners for all modal close buttons and cancel buttons
+            document.addEventListener('click', function(e) {
+                // Handle close buttons
+                if (e.target.closest('.modal-close-btn')) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const btn = e.target.closest('.modal-close-btn');
+                    const modalType = btn.getAttribute('data-modal');
+                    if (modalType === 'approve') {
+                        closeApproveModal();
+                    } else if (modalType === 'reject') {
+                        closeRejectModal();
+                    }
+                }
+
+                // Handle cancel buttons
+                if (e.target.closest('.modal-cancel-btn')) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const btn = e.target.closest('.modal-cancel-btn');
+                    const modalType = btn.getAttribute('data-modal');
+                    if (modalType === 'approve') {
+                        closeApproveModal();
+                    } else if (modalType === 'reject') {
+                        closeRejectModal();
+                    }
+                }
+            });
+
+            // Backdrop click listeners
+            if (approveModal) {
+                approveModal.addEventListener('click', function(e) {
+                    if (e.target === approveModal) {
+                        closeApproveModal();
+                    }
+                });
+            }
+
+            if (rejectModal) {
+                rejectModal.addEventListener('click', function(e) {
+                    if (e.target === rejectModal) {
+                        closeRejectModal();
+                    }
+                });
+            }
+
+            // ESC key listener
+            document.addEventListener('keydown', handleEscapeKey);
+        }
+
+        function handleEscapeKey(event) {
+            if (event.key === 'Escape' || event.keyCode === 27) {
+                if (approveModal && !approveModal.classList.contains('hidden')) {
+                    closeApproveModal();
+                }
+                if (rejectModal && !rejectModal.classList.contains('hidden')) {
+                    closeRejectModal();
+                }
+            }
+        }
+
+        function openApproveModal() {
+            if (!approveModal) {
+                approveModal = document.getElementById('approveModal');
+            }
+
+            // Prevent auto-opening - ensure this is only called by explicit user action
+            if (event && event.type !== 'click') {
+                console.log('Approve modal open prevented - not a click event');
+                return;
+            }
+
+            // Additional validation to prevent programmatic opening
+            if (!event || !event.isTrusted) {
+                console.log('Approve modal open prevented - event not trusted');
+                return;
+            }
+
+            const modalContent = approveModal.querySelector('.modal-content');
+
+            // Reset animation classes
+            modalContent.classList.remove('fade-out');
+
+            // Show modal
+            approveModal.classList.remove('hidden');
+            approveModal.classList.add('flex');
+
+            // Add animation class after a small delay to ensure transition
+            requestAnimationFrame(() => {
+                modalContent.classList.add('fade-in');
+            });
+
+            // Prevent body scroll
+            document.body.style.overflow = 'hidden';
+
+            // Focus management
+            setTimeout(() => {
+                const firstInput = approveModal.querySelector('input, textarea, button');
+                if (firstInput && typeof firstInput.focus === 'function') {
+                    firstInput.focus();
+                }
+            }, 150);
+        }
+
+        function closeApproveModal() {
+            if (!approveModal) {
+                approveModal = document.getElementById('approveModal');
+            }
+
+            const modalContent = approveModal.querySelector('.modal-content');
+
+            // Add fade out animation
+            modalContent.classList.remove('fade-in');
+            modalContent.classList.add('fade-out');
+
+            // Wait for animation to complete before hiding
+            setTimeout(() => {
+                approveModal.classList.add('hidden');
+                approveModal.classList.remove('flex');
+                document.body.style.overflow = '';
+
+                // Clean up animation classes
+                modalContent.classList.remove('fade-out');
+            }, 300);
+        }
+
+        function openRejectModal() {
+            if (!rejectModal) {
+                rejectModal = document.getElementById('rejectModal');
+            }
+
+            // Prevent auto-opening - ensure this is only called by explicit user action
+            if (event && event.type !== 'click') {
+                console.log('Reject modal open prevented - not a click event');
+                return;
+            }
+
+            // Additional validation to prevent programmatic opening
+            if (!event || !event.isTrusted) {
+                console.log('Reject modal open prevented - event not trusted');
+                return;
+            }
+
+            const modalContent = rejectModal.querySelector('.modal-content');
+
+            // Reset animation classes
+            modalContent.classList.remove('fade-out');
+
+            // Show modal
+            rejectModal.classList.remove('hidden');
+            rejectModal.classList.add('flex');
+
+            // Add animation class after a small delay to ensure transition
+            requestAnimationFrame(() => {
+                modalContent.classList.add('fade-in');
+            });
+
+            // Prevent body scroll
+            document.body.style.overflow = 'hidden';
+
+            // Focus management
+            setTimeout(() => {
+                const firstInput = rejectModal.querySelector('textarea');
+                if (firstInput && typeof firstInput.focus === 'function') {
+                    firstInput.focus();
+                }
+            }, 150);
+        }
+
+        function closeRejectModal() {
+            if (!rejectModal) {
+                rejectModal = document.getElementById('rejectModal');
+            }
+
+            const modalContent = rejectModal.querySelector('.modal-content');
+
+            // Add fade out animation
+            modalContent.classList.remove('fade-in');
+            modalContent.classList.add('fade-out');
+
+            // Wait for animation to complete before hiding
+            setTimeout(() => {
+                rejectModal.classList.add('hidden');
+                rejectModal.classList.remove('flex');
+                document.body.style.overflow = '';
+
+                // Clean up animation classes
+                modalContent.classList.remove('fade-out');
+            }, 300); // Increased timeout to match animation duration
+        }
+
+        // Enhanced form submission
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.modal-form').forEach(form => {
+                form.addEventListener('submit', function() {
+                    // Optional: Add loading state or disable buttons
+                    const submitBtn = this.querySelector('button[type="submit"]');
+                    if (submitBtn) {
+                        submitBtn.disabled = true;
+                        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Processing...';
+                    }
+                });
+            });
+        });
+
+      </script>
+@endpush
+
 <x-app-layout>
     <div class="dashboard-card mb-8">
         <div class="flex items-center justify-between">
@@ -371,116 +712,4 @@
             @endif
         </div>
     </div>
-
-    <!-- Approve Modal -->
-    <div id="approveModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-lg bg-white">
-            <div class="mt-3">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4">Approve Claim</h3>
-                <form method="POST" action="{{ route('admin.claims.approve', $claim->id) }}">
-                    @csrf
-                    <div class="mb-4">
-                        <label class="form-label">Claim Amount</label>
-                        <input type="text" value="RM {{ number_format($claim->amount, 2) }}" readonly class="form-input bg-gray-50">
-                    </div>
-
-                    <div class="mb-4">
-                        <label class="form-label" for="approved_amount">Approved Amount (RM)</label>
-                        <input type="number"
-                               name="approved_amount"
-                               step="0.01"
-                               min="0.01"
-                               max="{{ $claim->amount }}"
-                               class="form-input"
-                               placeholder="Enter approved amount">
-                        <p class="text-xs text-gray-500 mt-1">Leave blank to approve full amount</p>
-                    </div>
-
-                    <div class="mb-4">
-                        <label class="form-label" for="admin_notes">Admin Notes</label>
-                        <textarea name="admin_notes"
-                                  rows="3"
-                                  class="form-textarea"
-                                  placeholder="Add any notes for the employee..."></textarea>
-                    </div>
-
-                    <div class="flex justify-end space-x-3">
-                        <button type="button" onclick="closeApproveModal()" class="btn btn-ghost">
-                            Cancel
-                        </button>
-                        <button type="submit" class="btn btn-success">
-                            <i class="fas fa-check mr-2"></i>
-                            Approve Claim
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Reject Modal -->
-    <div id="rejectModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-lg bg-white">
-            <div class="mt-3">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4">Reject Claim</h3>
-                <form method="POST" action="{{ route('admin.claims.reject', $claim->id) }}">
-                    @csrf
-                    <div class="mb-4">
-                        <label class="form-label">Claim Title</label>
-                        <input type="text" value="{{ $claim->title }}" readonly class="form-input bg-gray-50">
-                    </div>
-
-                    <div class="mb-4">
-                        <label class="form-label" for="rejection_reason">Rejection Reason *</label>
-                        <textarea name="rejection_reason"
-                                  rows="4"
-                                  class="form-textarea"
-                                  placeholder="Please provide a reason for rejection..."
-                                  required></textarea>
-                    </div>
-
-                    <div class="flex justify-end space-x-3">
-                        <button type="button" onclick="closeRejectModal()" class="btn btn-ghost">
-                            Cancel
-                        </button>
-                        <button type="submit" class="btn btn-danger">
-                            <i class="fas fa-times mr-2"></i>
-                            Reject Claim
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        function openApproveModal() {
-            document.getElementById('approveModal').classList.remove('hidden');
-        }
-
-        function closeApproveModal() {
-            document.getElementById('approveModal').classList.add('hidden');
-        }
-
-        function openRejectModal() {
-            document.getElementById('rejectModal').classList.remove('hidden');
-        }
-
-        function closeRejectModal() {
-            document.getElementById('rejectModal').classList.add('hidden');
-        }
-
-        // Close modals when clicking outside
-        window.onclick = function(event) {
-            const approveModal = document.getElementById('approveModal');
-            const rejectModal = document.getElementById('rejectModal');
-
-            if (event.target === approveModal) {
-                closeApproveModal();
-            }
-            if (event.target === rejectModal) {
-                closeRejectModal();
-            }
-        }
-    </script>
 </x-app-layout>
