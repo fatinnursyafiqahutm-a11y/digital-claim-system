@@ -72,11 +72,8 @@ RUN php artisan key:generate
 RUN npm install \
     && npm run build
 
-# Wait for database connection and run migrations
-RUN php artisan migrate --force
-
 # Expose port 8080
 EXPOSE 8080
 
-# Start Laravel server
-CMD php artisan serve --host=0.0.0.0 --port=8080
+# Start Laravel server with migrations
+CMD sh -c "php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=8080"
