@@ -28,7 +28,9 @@
       "Bash(git push:*)",
       "WebFetch(domain:github.com)",
       "Bash(npm run lint:*)",
-      "Bash(README.md)"
+      "Bash(README.md)",
+      "WebFetch(domain:digital-claim-system.onrender.com)",
+      "Bash(chmod:*)"
     ],
     "deny": [],
     "ask": []

@@ -49,10 +49,14 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Copy existing application directory permissions
 COPY --chown=www-data:www-data . /var/www/html
 
+# Copy startup script
+COPY --chown=www-data:www-data start.sh /usr/local/bin/
+
 # Set permissions
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html/storage \
-    && chmod -R 755 /var/www/html/bootstrap/cache
+    && chmod -R 755 /var/www/html/bootstrap/cache \
+    && chmod +x /usr/local/bin/start.sh
 
 # Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader
@@ -81,11 +85,14 @@ RUN echo "APP_NAME=Laravel" > .env && \
 # Generate application key
 RUN php artisan key:generate
 
-# Clear configuration cache to ensure environment variables are used
-RUN php artisan config:clear
+# Clear all caches to ensure environment variables are used
+RUN php artisan config:clear && \
+    php artisan cache:clear && \
+    php artisan route:clear && \
+    php artisan view:clear
 
 # Expose port 8080 (Render's default)
 EXPOSE 8080
 
-# Start PHP development server for Render
-CMD php artisan serve --host=0.0.0.0 --port=8080
+# Start the application with the startup script
+CMD ["/usr/local/bin/start.sh"]
