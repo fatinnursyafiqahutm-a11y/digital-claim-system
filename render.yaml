@@ -1,0 +1,57 @@
+services:
+  # Laravel Web Service
+  - type: web
+    name: digital-claim-system
+    env: docker
+    repo: https://github.com/fatinnursyafiqahutm-a11y/digital-claim-system.git
+    rootDir: .
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    plan: free
+    region: oregon
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      # Laravel Configuration
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+      - key: APP_URL
+        sync: false # Will be set automatically by Render
+      - key: APP_KEY
+        generateValue: true
+
+      # Database Configuration (Supabase)
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DB_HOST
+        value: db.surssccnzmejgdufnibl.supabase.co
+      - key: DB_PORT
+        value: 5432
+      - key: DB_DATABASE
+        value: postgres
+      - key: DB_USERNAME
+        value: postgres
+      - key: DB_PASSWORD
+        value: DigitalClaimSystem@123
+
+      # Laravel Queue and Cache
+      - key: QUEUE_CONNECTION
+        value: database
+      - key: CACHE_DRIVER
+        value: database
+      - key: SESSION_DRIVER
+        value: database
+      - key: FILESYSTEM_DISK
+        value: local
+
+      # Build Configuration
+      - key: APP_MAINTENANCE_DRIVER
+        value: file
+
+  # Persistent Disk for File Storage
+  - type: disk
+    name: claim-receipts-storage
+    mountPath: /var/www/html/storage/app
+    sizeGB: 1
