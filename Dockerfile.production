@@ -62,17 +62,18 @@ RUN npm install \
     && npm run build
 
 # Create production environment file with PostgreSQL configuration
+# Force the environment to use PostgreSQL regardless of env variables
 RUN echo "APP_NAME=Laravel" > .env && \
     echo "APP_ENV=production" >> .env && \
     echo "APP_KEY=" >> .env && \
     echo "APP_DEBUG=false" >> .env && \
-    echo "APP_URL=http://localhost" >> .env && \
+    echo "APP_URL=\${APP_URL:-http://localhost}" >> .env && \
     echo "DB_CONNECTION=pgsql" >> .env && \
-    echo "DB_HOST=\${DB_HOST}" >> .env && \
-    echo "DB_PORT=\${DB_PORT}" >> .env && \
-    echo "DB_DATABASE=\${DB_DATABASE}" >> .env && \
-    echo "DB_USERNAME=\${DB_USERNAME}" >> .env && \
-    echo "DB_PASSWORD=\${DB_PASSWORD}" >> .env && \
+    echo "DB_HOST=\${DB_HOST:-db.surssccnzmejgdufnibl.supabase.co}" >> .env && \
+    echo "DB_PORT=\${DB_PORT:-5432}" >> .env && \
+    echo "DB_DATABASE=\${DB_DATABASE:-postgres}" >> .env && \
+    echo "DB_USERNAME=\${DB_USERNAME:-postgres}" >> .env && \
+    echo "DB_PASSWORD=\${DB_PASSWORD:-DigitalClaimSystem@123}" >> .env && \
     echo "QUEUE_CONNECTION=database" >> .env && \
     echo "CACHE_DRIVER=database" >> .env && \
     echo "SESSION_DRIVER=database" >> .env && \
@@ -87,23 +88,11 @@ RUN php artisan config:clear && \
     php artisan route:clear && \
     php artisan view:clear
 
-# Expose port 8080 (Render's default)
-EXPOSE 8080
+# Test database connection during build
+RUN php artisan tinker --execute="echo 'Testing database connection...\n'; try { \DB::connection()->getPdo(); echo 'Database connection SUCCESSFUL during build!\n'; } catch (\Exception \$e) { echo 'Database connection failed during build: ' . \$e->getMessage() . '\n'; }"
 
-# Run migrations and clear caches at container startup
-RUN echo "#!/bin/sh" > /usr/local/bin/start.sh && \
-    echo "echo '=== STARTING APPLICATION ==='" >> /usr/local/bin/start.sh && \
-    echo "echo 'Environment variables:'" >> /usr/local/bin/start.sh && \
-    echo "echo \"DB_CONNECTION: \${DB_CONNECTION}\"" >> /usr/local/bin/start.sh && \
-    echo "echo \"DB_HOST: \${DB_HOST}\"" >> /usr/local/bin/start.sh && \
-    echo "echo 'Clearing Laravel caches...'" >> /usr/local/bin/start.sh && \
-    echo "php artisan config:clear" >> /usr/local/bin/start.sh && \
-    echo "php artisan cache:clear" >> /usr/local/bin/start.sh && \
-    echo "echo 'Running database migrations...'" >> /usr/local/bin/start.sh && \
-    echo "php artisan migrate --force" >> /usr/local/bin/start.sh && \
-    echo "echo 'Starting Laravel server...'" >> /usr/local/bin/start.sh && \
-    echo "php artisan serve --host=0.0.0.0 --port=8080" >> /usr/local/bin/start.sh && \
-    chmod +x /usr/local/bin/start.sh
+# Expose port (Render uses PORT environment variable)
+EXPOSE 10000
 
-# Start the application
-CMD ["/usr/local/bin/start.sh"]
+# Start Laravel server directly (this will be overridden by Render's Docker Command)
+CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=${PORT:-10000}"]

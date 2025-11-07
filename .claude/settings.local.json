@@ -30,7 +30,9 @@
       "Bash(npm run lint:*)",
       "Bash(README.md)",
       "WebFetch(domain:digital-claim-system.onrender.com)",
-      "Bash(chmod:*)"
+      "Bash(chmod:*)",
+      "WebSearch",
+      "WebFetch(domain:render.com)"
     ],
     "deny": [],
     "ask": []
