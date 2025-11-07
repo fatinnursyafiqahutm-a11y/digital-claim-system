@@ -60,7 +60,7 @@ RUN cp .env.example .env && \
     echo "ASSET_URL=https://digital-claim-system.onrender.com" >> .env && \
     sed -i 's/DB_CONNECTION=sqlite/DB_CONNECTION=pgsql/' .env && \
     echo "DB_HOST=db.surssccnzmejgdufnibl.supabase.co" >> .env && \
-    echo "DB_PORT=5432" >> .env && \
+    echo "DB_PORT=6543" >> .env && \
     echo "DB_DATABASE=postgres" >> .env && \
     echo "DB_USERNAME=postgres" >> .env && \
     echo "DB_PASSWORD=DigitalClaimSystem@123" >> .env && \
