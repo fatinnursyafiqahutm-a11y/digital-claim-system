@@ -23,7 +23,7 @@ RUN apk add --no-cache \
 # Clear cache
 RUN rm -rf /var/cache/apk/*
 
-# Install PHP extensions
+# Install PHP extensions (removed problematic iconv and intl)
 RUN docker-php-ext-install \
     pdo \
     pdo_mysql \
@@ -35,9 +35,7 @@ RUN docker-php-ext-install \
     opcache \
     mbstring \
     xml \
-    ctype \
-    iconv \
-    intl
+    ctype
 
 # Configure PHP
 RUN sed -i "s/memory_limit = 128M/memory_limit = 512M/" /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini
