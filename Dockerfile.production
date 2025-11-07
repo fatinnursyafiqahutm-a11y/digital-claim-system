@@ -61,12 +61,6 @@ RUN composer install --no-dev --optimize-autoloader
 RUN npm install \
     && npm run build
 
-# Copy startup script
-COPY --chown=www-data:www-data start.sh /usr/local/bin/start.sh
-
-# Set permissions for startup script
-RUN chmod +x /usr/local/bin/start.sh
-
 # Create production environment file with PostgreSQL configuration
 RUN echo "APP_NAME=Laravel" > .env && \
     echo "APP_ENV=production" >> .env && \
@@ -96,5 +90,20 @@ RUN php artisan config:clear && \
 # Expose port 8080 (Render's default)
 EXPOSE 8080
 
-# Start the application with the startup script
+# Run migrations and clear caches at container startup
+RUN echo "#!/bin/sh" > /usr/local/bin/start.sh && \
+    echo "echo '=== STARTING APPLICATION ==='" >> /usr/local/bin/start.sh && \
+    echo "echo 'Environment variables:'" >> /usr/local/bin/start.sh && \
+    echo "echo \"DB_CONNECTION: \${DB_CONNECTION}\"" >> /usr/local/bin/start.sh && \
+    echo "echo \"DB_HOST: \${DB_HOST}\"" >> /usr/local/bin/start.sh && \
+    echo "echo 'Clearing Laravel caches...'" >> /usr/local/bin/start.sh && \
+    echo "php artisan config:clear" >> /usr/local/bin/start.sh && \
+    echo "php artisan cache:clear" >> /usr/local/bin/start.sh && \
+    echo "echo 'Running database migrations...'" >> /usr/local/bin/start.sh && \
+    echo "php artisan migrate --force" >> /usr/local/bin/start.sh && \
+    echo "echo 'Starting Laravel server...'" >> /usr/local/bin/start.sh && \
+    echo "php artisan serve --host=0.0.0.0 --port=8080" >> /usr/local/bin/start.sh && \
+    chmod +x /usr/local/bin/start.sh
+
+# Start the application
 CMD ["/usr/local/bin/start.sh"]
