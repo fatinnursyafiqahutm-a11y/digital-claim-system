@@ -54,16 +54,17 @@ RUN chown -R www-data:www-data /var/www/html \
 # Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# Install Node.js dependencies and build assets
-RUN npm install \
-    && npm run build
-
-# Create environment file for deployment
+# Create environment file for deployment first
 RUN cp .env.example .env && \
-    sed -i 's/APP_URL=http:\/\/localhost/APP_URL=https:\/\/digital-claim-system.onrender.com/' .env
+    sed -i 's/APP_URL=http:\/\/localhost/APP_URL=https:\/\/digital-claim-system.onrender.com/' .env && \
+    echo "ASSET_URL=https://digital-claim-system.onrender.com" >> .env
 
 # Generate application key
 RUN php artisan key:generate
+
+# Install Node.js dependencies and build assets with correct URL
+RUN npm install \
+    && npm run build
 
 # Create SQLite database file
 RUN touch /var/www/html/database/database.sqlite
