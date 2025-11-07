@@ -59,7 +59,8 @@ RUN npm install \
     && npm run build
 
 # Create environment file for deployment
-RUN cp .env.example .env
+RUN cp .env.example .env && \
+    sed -i 's/APP_URL=http:\/\/localhost/APP_URL=https:\/\/digital-claim-system.onrender.com/' .env
 
 # Generate application key
 RUN php artisan key:generate
