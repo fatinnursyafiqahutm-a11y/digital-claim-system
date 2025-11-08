@@ -37,6 +37,10 @@ RUN docker-php-ext-install \
     xml \
     ctype
 
+# Force IPv4 for PostgreSQL connections
+RUN echo "options single-request-reopen" >> /etc/resolv.conf && \
+    echo "precedence ::ffff:0:0/96 100" >> /etc/gai.conf
+
 # Configure PHP
 RUN sed -i "s/memory_limit = 128M/memory_limit = 512M/" /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini
 
@@ -79,12 +83,6 @@ EXPOSE 8080
 # Create startup script
 RUN echo '#!/bin/sh' > /start.sh && \
     echo 'echo "Starting application..."' >> /start.sh && \
-    echo 'echo "Testing database connection..."' >> /start.sh && \
-    echo 'for i in 1 2 3 4 5; do' >> /start.sh && \
-    echo '  if php artisan tinker --execute="try { \DB::connection()->getPdo(); echo \"Connection successful!\n\"; exit(0); } catch (\Exception \$e) { echo \"Attempt \$i: \" . \$e->getMessage() . \"\n\"; if (\$i == 5) { exit(1); } sleep 2; }"; then' >> /start.sh && \
-    echo '    break' >> /start.sh && \
-    echo '  fi' >> /start.sh && \
-    echo 'done' >> /start.sh && \
     echo 'echo "Running migrations..."' >> /start.sh && \
     echo 'php artisan migrate --force' >> /start.sh && \
     echo 'echo "Starting server..."' >> /start.sh && \
