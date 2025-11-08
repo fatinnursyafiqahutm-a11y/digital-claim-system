@@ -1,4 +1,4 @@
-# Use PHP 8.2 FPM as base image - FIXED VERSION
+# Use PHP 8.2 FPM as base image - FORCE REBUILD 2025-11-08-15-30
 FROM php:8.2-fpm-alpine
 
 # Set working directory
@@ -66,7 +66,8 @@ RUN cp .env.example .env && \
     echo "DB_USERNAME=postgres" >> .env && \
     echo "DB_PASSWORD=DigitalClaimSystem@123" >> .env && \
     echo "DB_SSLMODE=require" >> .env && \
-    echo "DB_CHARSET=utf8" >> .env
+    echo "DB_CHARSET=utf8" >> .env && \
+    echo "DB_HOST=db.surssccnzmejgdufnibl.supabase.co" >> .env
 
 # Generate application key
 RUN php artisan key:generate
