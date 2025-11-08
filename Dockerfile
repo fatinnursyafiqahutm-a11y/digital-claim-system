@@ -37,9 +37,6 @@ RUN docker-php-ext-install \
     xml \
     ctype
 
-# Force IPv4 for PostgreSQL connections
-RUN echo "options single-request-reopen" >> /etc/resolv.conf && \
-    echo "precedence ::ffff:0:0/96 100" >> /etc/gai.conf
 
 # Configure PHP
 RUN sed -i "s/memory_limit = 128M/memory_limit = 512M/" /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini
@@ -68,7 +65,8 @@ RUN cp .env.example .env && \
     echo "DB_DATABASE=postgres" >> .env && \
     echo "DB_USERNAME=postgres" >> .env && \
     echo "DB_PASSWORD=DigitalClaimSystem@123" >> .env && \
-    echo "DB_SSLMODE=prefer" >> .env
+    echo "DB_SSLMODE=require" >> .env && \
+    echo "DB_CHARSET=utf8" >> .env
 
 # Generate application key
 RUN php artisan key:generate
