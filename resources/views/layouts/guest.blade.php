@@ -19,8 +19,8 @@
             <div class="mb-8 fade-in-down">
                 <a href="/" class="block">
                     <div class="text-center">
-                        <h1 class="text-4xl font-bold text-white mb-2 tracking-tight drop-shadow-lg">DIGITAL CLAIM</h1>
-                        <p class="text-white drop-shadow-md text-sm font-medium">Management System</p>
+                        <h1 class="text-4xl font-bold text-red-800 mb-2 tracking-tight drop-shadow-lg">DIGITAL CLAIM</h1>
+                        <p class="text-red-800 drop-shadow-md text-sm font-medium">Management System</p>
                     </div>
                 </a>
             </div>
