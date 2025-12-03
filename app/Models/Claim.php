@@ -518,25 +518,26 @@ class Claim extends Model
     /**
      * Get claim statistics for dashboard.
      */
-    public static function getClaimStatistics(int $userId = null): array
-    {
-        $query = static::query();
+public static function getClaimStatistics(int $userId = null): array
+{
+    $baseQuery = static::query();
 
-        if ($userId) {
-            $query->where('user_id', $userId);
-        }
-
-        return [
-            'total_claims' => $query->count(),
-            'draft_claims' => $query->byStatus('draft')->count(),
-            'submitted_claims' => $query->byStatus('submitted')->count(),
-            'under_review_claims' => $query->byStatus('under_review')->count(),
-            'approved_claims' => $query->byStatus('approved')->count(),
-            'rejected_claims' => $query->byStatus('rejected')->count(),
-            'total_amount' => $query->sum('amount'),
-            'approved_amount' => $query->byStatus('approved')->sum('approved_amount'),
-        ];
+    if ($userId) {
+        $baseQuery->where('user_id', $userId);
     }
+
+    return [
+        'total_claims'      => (clone $baseQuery)->count(),
+        'draft_claims'      => (clone $baseQuery)->byStatus('draft')->count(),
+        'submitted_claims'  => (clone $baseQuery)->byStatus('submitted')->count(),
+        'under_review_claims' => (clone $baseQuery)->byStatus('under_review')->count(),
+        'approved_claims'   => (clone $baseQuery)->byStatus('approved')->count(),
+        'rejected_claims'   => (clone $baseQuery)->byStatus('rejected')->count(),
+        'total_amount'      => (clone $baseQuery)->sum('amount'),
+        'approved_amount'   => (clone $baseQuery)->byStatus('approved')->sum('approved_amount'),
+    ];
+}
+
 
     /**
      * Create audit log entry.
