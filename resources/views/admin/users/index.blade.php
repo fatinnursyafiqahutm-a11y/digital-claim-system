@@ -52,131 +52,123 @@
     </div>
 
     <!-- Employees Table -->
-    <div class="dashboard-card">
-        @forelse ($employees as $employee)
-            <div class="overflow-x-auto">
-                <table class="styled-table">
-                    <thead>
-                        <tr>
-                            <th>Employee</th>
-                            <th>Employee ID</th>
-                            <th>Department</th>
-                            <th>Status</th>
-                            <th>Last Login</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>
-                                <div class="flex items-center space-x-3">
-                                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
-                                        <i class="fas fa-user text-white text-sm"></i>
-                                    </div>
-                                    <div>
-                                        <div class="font-semibold text-gray-900">{{ $employee->name }}</div>
-                                        <div class="text-sm text-gray-500">{{ $employee->email }}</div>
-                                        @if ($employee->phone)
-                                            <div class="text-xs text-gray-400">
-                                                <i class="fas fa-phone mr-1"></i>{{ $employee->phone }}
-                                            </div>
-                                        @endif
-                                    </div>
+   <div class="dashboard-card">
+    <div class="overflow-x-auto">
+        <table class="styled-table">
+            <thead>
+                <tr>
+                    <th>Employee</th>
+                    <th>Employee ID</th>
+                    <th>Department</th>
+                    <th>Status</th>
+                    <th>Last Login</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse ($employees as $employee)
+                    <tr>
+                        <td>
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-user text-white text-sm"></i>
                                 </div>
-                            </td>
-                            <td>
-                                <div class="flex items-center space-x-2">
-                                    <i class="fas fa-id-badge text-gray-400"></i>
-                                    <span class="font-mono text-sm">{{ $employee->employee_id }}</span>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="flex items-center space-x-2">
-                                    <i class="fas fa-building text-gray-400"></i>
-                                    <span>{{ $employee->department }}</span>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="flex flex-wrap gap-2">
-                                    @if ($employee->is_active)
-                                        <span class="badge badge-approved">Active</span>
-                                    @else
-                                        <span class="badge badge-rejected">Inactive</span>
-                                    @endif
-                                    @if ($employee->password_reset_required)
-                                        <span class="badge badge-pending">Reset Required</span>
+                                <div>
+                                    <div class="font-semibold text-gray-900">{{ $employee->name }}</div>
+                                    <div class="text-sm text-gray-500">{{ $employee->email }}</div>
+                                    @if ($employee->phone)
+                                        <div class="text-xs text-gray-400">
+                                            <i class="fas fa-phone mr-1"></i>{{ $employee->phone }}
+                                        </div>
                                     @endif
                                 </div>
-                            </td>
-                            <td>
-                                <div class="flex items-center space-x-2">
-                                    <i class="fas fa-clock text-gray-400"></i>
-                                    <span class="text-sm">
-                                        {{ $employee->last_login_at ? $employee->last_login_at->diffForHumans() : 'Never' }}
-                                    </span>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="flex items-center space-x-2">
-                                    <a href="{{ route('admin.users.edit', $employee) }}"
-                                       class="btn btn-sm btn-alt"
-                                       title="Edit Employee">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="flex items-center space-x-2">
+                                <i class="fas fa-id-badge text-gray-400"></i>
+                                <span class="font-mono text-sm">{{ $employee->employee_id }}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="flex items-center space-x-2">
+                                <i class="fas fa-building text-gray-400"></i>
+                                <span>{{ $employee->department }}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="flex flex-wrap gap-2">
+                                @if ($employee->is_active)
+                                    <span class="badge badge-approved">Active</span>
+                                @else
+                                    <span class="badge badge-rejected">Inactive</span>
+                                @endif
+                                @if ($employee->password_reset_required)
+                                    <span class="badge badge-pending">Reset Required</span>
+                                @endif
+                            </div>
+                        </td>
+                        <td>
+                            <div class="flex items-center space-x-2">
+                                <i class="fas fa-clock text-gray-400"></i>
+                                <span class="text-sm">
+                                    {{ $employee->last_login_at ? $employee->last_login_at->diffForHumans() : 'Never' }}
+                                </span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="flex items-center space-x-2">
+                                <a href="{{ route('admin.users.edit', $employee) }}" class="btn btn-sm btn-alt">
+                                    <i class="fas fa-edit"></i>
+                                </a>
 
-                                    @if ($employee->is_active)
-                                        <form method="POST" action="{{ route('admin.users.reset-password', $employee) }}" class="inline">
-                                            @csrf
-                                            <button type="submit"
-                                                    class="btn btn-sm btn-ghost"
-                                                    title="Reset Password"
-                                                    onclick="return confirm('Are you sure you want to reset the password for {{ $employee->name }}?')">
-                                                <i class="fas fa-key"></i>
-                                            </button>
-                                        </form>
+                                @if ($employee->is_active)
+                                    <form method="POST" action="{{ route('admin.users.reset-password', $employee) }}" class="inline">
+                                        @csrf
+                                        <button type="submit" class="btn btn-sm btn-ghost">
+                                            <i class="fas fa-key"></i>
+                                        </button>
+                                    </form>
 
-                                        <form method="POST" action="{{ route('admin.users.destroy', $employee) }}" class="inline">
-                                            @csrf
-                                            <button type="submit"
-                                                    class="btn btn-sm btn-danger"
-                                                    title="Deactivate Employee"
-                                                    onclick="return confirm('Are you sure you want to deactivate {{ $employee->name }}?')">
-                                                <i class="fas fa-user-times"></i>
-                                            </button>
-                                        </form>
-                                    @else
-                                        <form method="POST" action="{{ route('admin.users.activate', $employee) }}" class="inline">
-                                            @csrf
-                                            <button type="submit"
-                                                    class="btn btn-sm btn-alt"
-                                                    title="Activate Employee">
-                                                <i class="fas fa-user-check"></i>
-                                            </button>
-                                        </form>
-                                    @endif
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Pagination -->
-            @if ($employees->hasPages())
-                <div class="mt-6 flex justify-center">
-                    {{ $employees->links() }}
-                </div>
-            @endif
-        @empty
-            <div class="text-center py-12">
-                <i class="fas fa-users text-gray-300 text-6xl mb-6"></i>
-                <h3 class="text-xl font-semibold text-gray-600 mb-2">No Employees Found</h3>
-                <p class="text-gray-500 mb-6">Get started by adding your first employee to the system.</p>
-                <a href="{{ route('admin.users.create') }}" class="btn btn-primary">
-                    <i class="fas fa-user-plus mr-2"></i>
-                    Add First Employee
-                </a>
-            </div>
-        @endforelse
+                                    <form method="POST" action="{{ route('admin.users.destroy', $employee) }}" class="inline">
+                                        @csrf
+                                        <button type="submit" class="btn btn-sm btn-danger">
+                                            <i class="fas fa-user-times"></i>
+                                        </button>
+                                    </form>
+                                @else
+                                    <form method="POST" action="{{ route('admin.users.activate', $employee) }}" class="inline">
+                                        @csrf
+                                        <button type="submit" class="btn btn-sm btn-alt">
+                                            <i class="fas fa-user-check"></i>
+                                        </button>
+                                    </form>
+                                @endif
+                            </div>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="6" class="text-center py-12">
+                            <i class="fas fa-users text-gray-300 text-6xl mb-6"></i>
+                            <h3 class="text-xl font-semibold text-gray-600 mb-2">No Employees Found</h3>
+                            <p class="text-gray-500 mb-6">Add your first employee.</p>
+                            <a href="{{ route('admin.users.create') }}" class="btn btn-primary">
+                                <i class="fas fa-user-plus mr-2"></i>
+                                Add First Employee
+                            </a>
+                        </td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
     </div>
+
+    @if ($employees->hasPages())
+        <div class="mt-6 flex justify-center">
+            {{ $employees->links() }}
+        </div>
+    @endif
+</div>
+
 </x-app-layout>
