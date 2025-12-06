@@ -19,19 +19,19 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div class="bg-blue-50 p-6 rounded-lg">
                         <h3 class="text-lg font-semibold text-blue-900 mb-2">My Claims</h3>
-                        <p class="text-3xl font-bold text-blue-600">0</p>
+                        <p class="text-3xl font-bold text-blue-600">{{ $statistics['total_claims'] }}</p>
                         <p class="text-sm text-blue-700 mt-1">Total claims submitted</p>
                     </div>
 
                     <div class="bg-yellow-50 p-6 rounded-lg">
                         <h3 class="text-lg font-semibold text-yellow-900 mb-2">Pending</h3>
-                        <p class="text-3xl font-bold text-yellow-600">0</p>
+                        <p class="text-3xl font-bold text-yellow-600">{{$statistics['submitted_claims'] }}</p>
                         <p class="text-sm text-yellow-700 mt-1">Awaiting approval</p>
                     </div>
 
                     <div class="bg-green-50 p-6 rounded-lg">
                         <h3 class="text-lg font-semibold text-green-900 mb-2">Approved</h3>
-                        <p class="text-3xl font-bold text-green-600">0</p>
+                        <p class="text-3xl font-bold text-green-600">{{$statistics['approved_claims']}}</p>
                         <p class="text-sm text-green-700 mt-1">Claims approved</p>
                     </div>
                 </div>
