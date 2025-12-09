@@ -14,6 +14,15 @@ class UpdateClaimRequest extends FormRequest
     {
         $claim = $this->route('claim');
 
+        if (!is_object($claim)) {
+            $claim = \App\Models\Claim::find($claim);
+
+            // If not found, deny access
+            if (!$claim) {
+                return false;
+            }
+        }
+
         // User must be logged in and be an employee
         if (!auth()->check() || !auth()->user()->hasRole('employee')) {
             return false;
@@ -187,10 +196,21 @@ class UpdateClaimRequest extends FormRequest
     /**
      * Configure the validator instance.
      */
-    public function withValidator($validator)
+   public function withValidator($validator)
     {
         $validator->after(function ($validator) {
             $claim = $this->route('claim');
+
+            // Convert claim to object if it's just an ID
+            if (!is_object($claim)) {
+                $claim = \App\Models\Claim::find($claim);
+
+                // If claim not found, add validation error and skip further checks
+                if (!$claim) {
+                    $validator->errors()->add('status', 'Claim not found.');
+                    return;
+                }
+            }
 
             // Additional business rule validation based on claim amount
             if ($this->has('amount') && $this->amount > 1000) {
@@ -202,10 +222,11 @@ class UpdateClaimRequest extends FormRequest
             }
 
             // Validate that claim hasn't been submitted for approval
-            if ($claim && !$claim->canBeEdited()) {
+            if (!$claim->canBeEdited()) {
                 $validator->errors()->add('status',
                     'This claim cannot be edited because it has already been submitted for approval.');
             }
         });
     }
+
 }
