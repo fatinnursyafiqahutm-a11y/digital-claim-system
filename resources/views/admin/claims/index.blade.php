@@ -125,6 +125,23 @@
 
     <!-- Claims List -->
     <div class="dashboard-card">
+        <div class="flex items-center mb-3">
+            <div class="flex items-center space-x-2">
+                <span class="w-3 h-3 rounded-full bg-red-500"></span>
+                <span class="text-sm text-gray-700">Unread</span>
+                @if(($unreadCount ?? 0) > 0)
+                    <span class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-red-100 text-red-700">
+                        {{ ($unreadCount ?? 0) > 99 ? '99+' : ($unreadCount ?? 0) }}
+                    </span>
+                    <form method="POST" action="{{ route('admin.claims.mark-all-read') }}" class="ml-3">
+                        @csrf
+                        <button type="submit" class="text-xs text-indigo-600 hover:text-indigo-800 font-semibold">
+                            Mark all read
+                        </button>
+                    </form>
+                @endif
+            </div>
+        </div>
         @if ($claims->count() > 0)
             <div class="overflow-x-auto">
                 <table class="w-full divide-y divide-gray-200">
@@ -143,10 +160,13 @@
                         @foreach ($claims as $claim)
                             <tr class="hover:bg-gray-50 {{ $claim->status == 'submitted' || $claim->status == 'under_review' ? 'bg-yellow-50' : '' }}">
                                 <td class="px-6 py-4 whitespace-nowrap w-2/6 text-left">
-                                    <div>
-                                        <div class="text-sm font-medium text-gray-900">{{ $claim->title }}</div>
-                                        <div class="text-sm text-gray-500">{{ Str::limit($claim->description, 50) }}</div>
-                                        <div class="text-xs text-gray-400 mt-1">ID: {{ $claim->id }}</div>
+                                    <div class="flex items-start space-x-3">
+                                        <span class="mt-2 w-2 h-2 rounded-full {{ $claim->is_admin_read ? 'bg-transparent' : 'bg-red-500' }}"></span>
+                                        <div>
+                                            <div class="text-sm font-medium text-gray-900">{{ $claim->title }}</div>
+                                            <div class="text-sm text-gray-500">{{ Str::limit($claim->description, 50) }}</div>
+                                            <div class="text-xs text-gray-400 mt-1">ID: {{ $claim->id }}</div>
+                                        </div>
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap w-1/8 text-center">

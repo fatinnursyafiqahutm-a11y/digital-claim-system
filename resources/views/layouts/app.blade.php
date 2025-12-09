@@ -45,6 +45,18 @@
                                     Profile Settings
                                 </a>
                             </li>
+                            <li>
+                                <a href="{{ auth()->user()->isFinanceAdmin() ? route('admin.claims.index', ['unread' => 1]) : route('employee.claims.index', ['unread' => 1]) }}"
+                                   class="nav-link flex items-center {{ request()->get('unread') ? 'active text-white' : 'text-white/80 hover:text-white' }} block">
+                                    <i class="fas fa-bell w-5 mr-3"></i>
+                                    Notifications
+                                    @if(($notificationCount ?? 0) > 0)
+                                        <span class="ml-auto inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-red-500 text-white">
+                                            {{ ($notificationCount ?? 0) > 99 ? '99+' : ($notificationCount ?? 0) }}
+                                        </span>
+                                    @endif
+                                </a>
+                            </li>
                             @if (auth()->user()->isFinanceAdmin())
                                 <li>
                                     <a href="{{ route('admin.users.index') }}"

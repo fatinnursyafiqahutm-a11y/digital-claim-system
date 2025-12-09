@@ -26,6 +26,9 @@ class ClaimController extends Controller
             ->when($request->status, function ($query, $status) {
                 $query->byStatus($status);
             })
+            ->when($request->boolean('unread'), function ($query) {
+                $query->where('is_read', false);
+            })
             ->when($request->search, function ($query, $search) {
                 $query->search($search);
             })
@@ -44,7 +47,12 @@ class ClaimController extends Controller
         // Get available categories for filter (only active ones)
         $categories = ClaimCategory::active()->orderBy('display_name')->get();
 
-        return view('employee.claims.index', compact('claims', 'statistics', 'categories'));
+        // Unread count for this employee
+        $unreadCount = Claim::where('user_id', $user->id)
+            ->where('is_read', false)
+            ->count();
+
+        return view('employee.claims.index', compact('claims', 'statistics', 'categories', 'unreadCount'));
     }
 
     public function create()
@@ -137,6 +145,11 @@ class ClaimController extends Controller
             ->where('user_id', $user->id)
             ->findOrFail($id);
 
+        // Mark as read for the employee when opened
+        if (!$claim->is_read) {
+            $claim->update(['is_read' => true]);
+        }
+
         // Decode category-specific data if exists
         $categoryData = [];
         if ($claim->category_data) {
@@ -197,6 +210,7 @@ class ClaimController extends Controller
                 'claim_date', 'category_id', 'priority'
             ]);
             $claimData['status'] = 'draft';
+            $claimData['isadminread'] = false;
 
             $claim->update($claimData);
 
@@ -320,6 +334,17 @@ class ClaimController extends Controller
         }
     }
 
+    /**
+     * Mark all employee claims as read for the authenticated user.
+     */
+    public function markAllReadEmployee()
+    {
+        $user = Auth::user();
+        Claim::where('user_id', $user->id)->where('is_read', false)->update(['is_read' => true]);
+
+        return redirect()->back()->with('success', 'All notifications marked as read.');
+    }
+
     // Admin methods
     public function adminIndex(Request $request)
     {
@@ -332,6 +357,9 @@ class ClaimController extends Controller
         $claims = Claim::with(['user', 'category', 'receipts', 'approvals'])
             ->when($request->status, function ($query, $status) {
                 $query->byStatus($status);
+            })
+            ->when($request->boolean('unread'), function ($query) {
+                $query->where('is_admin_read', false);
             })
             ->when($request->user_id, function ($query, $userId) {
                 $query->where('user_id', $userId);
@@ -371,12 +399,16 @@ class ClaimController extends Controller
         // Get pending claims count for badge
         $pendingCount = Claim::pending()->count();
 
+        // Unread count for finance admins
+        $unreadCount = Claim::where('is_admin_read', false)->count();
+
         return view('admin.claims.index', compact(
             'claims',
             'statistics',
             'categories',
             'users',
-            'pendingCount'
+            'pendingCount',
+            'unreadCount'
         ));
     }
 
@@ -389,6 +421,11 @@ class ClaimController extends Controller
 
         $claim = Claim::with(['user', 'category', 'receipts', 'approvals', 'auditLogs'])
             ->findOrFail($id);
+
+        // Mark as read for admins when opened
+        if (!$claim->is_admin_read) {
+            $claim->update(['is_admin_read' => true]);
+        }
 
         // Decode category-specific data if exists
         $categoryData = [];
@@ -503,6 +540,16 @@ class ClaimController extends Controller
                 ->withInput()
                 ->with('error', 'Failed to reject claim. ' . $e->getMessage());
         }
+    }
+
+    /**
+     * Mark all claims as read for admins.
+     */
+    public function markAllReadAdmin()
+    {
+        Claim::where('is_admin_read', false)->update(['is_admin_read' => true]);
+
+        return redirect()->back()->with('success', 'All notifications marked as read.');
     }
 
     /**

@@ -25,6 +25,8 @@ class Claim extends Model
         'currency',
         'claim_date',
         'status',
+        'is_read',
+        'is_admin_read',
         'priority',
         'category_data',
         'submitted_at',
@@ -55,6 +57,8 @@ class Claim extends Model
             'approved_at' => 'datetime',
             'rejected_at' => 'datetime',
             'payment_date' => 'date',
+            'is_read' => 'boolean',
+            'is_admin_read' => 'boolean',
         ];
     }
 
@@ -366,6 +370,8 @@ class Claim extends Model
             // Update claim status and timestamps
             $this->status = 'submitted';
             $this->submitted_at = now();
+            $this->is_admin_read = false; // mark unread for admins
+            $this->is_read = true; // submitting user has seen it
             $this->save();
 
             // Create audit log
@@ -404,6 +410,7 @@ class Claim extends Model
 
             // Update claim status and details
             $this->status = 'approved';
+            $this->is_read= false;
             $this->approved_amount = $approvedAmount;
             $this->approved_at = now();
             $this->admin_notes = $adminNotes;
@@ -456,6 +463,7 @@ class Claim extends Model
 
             // Update claim status and rejection details
             $this->status = 'rejected';
+            $this->is_read = false;
             $this->rejection_reason = $rejectionReason;
             $this->rejected_at = now();
             $this->save();
