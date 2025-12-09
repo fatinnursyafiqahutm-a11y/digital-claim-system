@@ -43,9 +43,9 @@
                     </div>
                 @endif
 
-                <pre>
+                {{-- <pre>
                     {{ json_encode($claim, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) }}
-                </pre>
+                </pre> --}}
 
                 <form action="{{ route('employee.claims.update', ['claim' => $claim->id]) }}" method="POST"
                     enctype="multipart/form-data" class="space-y-6">
@@ -273,6 +273,7 @@
                 window.oldFormData.category_data = {};
             }
         }
+        console.log("window.oldFormData.category_data", window.oldFormData.category_data)
 
         // console.log(window.oldFormData.category_data)
 
@@ -742,14 +743,14 @@
                                 <input type="text" id="client_name" name="category_data[client_name]"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                     placeholder="Enter client contact person"
-                                    value="${window.oldFormData.client_name || ''}">
+                                    value="${window.oldFormData.category_data.client_name || ''}">
                             </div>
                             <div>
                                 <label for="client_company" class="block text-sm font-medium text-gray-700">Client Company *</label>
                                 <input type="text" id="client_company" name="category_data[client_company]"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                     placeholder="Enter client company name"
-                                    value="${window.oldFormData.client_company || ''}">
+                                    value="${window.oldFormData.category_data.client_company || ''}">
                             </div>
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
@@ -758,14 +759,14 @@
                                 <input type="text" id="parking_location" name="category_data[parking_location]"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                     placeholder="Enter parking location or address"
-                                    value="${window.oldFormData.parking_location || ''}">
+                                    value="${window.oldFormData.category_data.parking_location || ''}">
                             </div>
                             <div>
                                 <label for="visit_date" class="block text-sm font-medium text-gray-700">Visit Date *</label>
                                 <input type="date" id="visit_date" name="category_data[visit_date]"
                                     max="{{ now()->format('Y-m-d') }}"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                    value="${window.oldFormData.visit_date || ''}">
+                                    value="${window.oldFormData.category_data.visit_date || ''}">
                             </div>
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
@@ -774,14 +775,14 @@
                                 <input type="number" id="duration_hours" name="category_data[duration_hours]" min="0.5" max="24" step="0.5"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                     placeholder="Enter duration in hours"
-                                    value="${window.oldFormData.duration_hours || ''}">
+                                    value="${window.oldFormData.category_data.duration_hours || ''}">
                             </div>
                         </div>
                         <div class="mt-4">
                             <label for="meeting_purpose" class="block text-sm font-medium text-gray-700">Meeting Purpose *</label>
                             <textarea id="meeting_purpose" name="category_data[meeting_purpose]" rows="2"
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                placeholder="Describe the purpose of the client meeting...">${window.oldFormData.meeting_purpose || ''}</textarea>
+                                placeholder="Describe the purpose of the client meeting...">${window.oldFormData.category_data.meeting_purpose || ''}</textarea>
                         </div>
                     `;
                     } else if (categoryId == '27') { // Medical Claim

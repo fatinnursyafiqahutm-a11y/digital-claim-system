@@ -225,8 +225,8 @@
 
     <!-- Simple Modal System for Index Page -->
     <div id="indexApproveModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-lg bg-white">
-            <div class="mt-3">
+        <div class="flex justify-center w-full items-center">
+            <div class="mt-3 bg-white rounded-xl shadow-lg p-5">
                 <h3 class="text-lg font-semibold text-gray-900 mb-4">Approve Claim</h3>
                 <form id="indexApproveForm" method="POST" action="">
                     @csrf
@@ -278,8 +278,8 @@
     </div>
 
     <div id="indexRejectModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-lg bg-white">
-            <div class="mt-3">
+        <div class="flex justify-center w-full items-center">
+            <div class="mt-3 bg-white rounded-xl shadow-lg p-5">
                 <h3 class="text-lg font-semibold text-gray-900 mb-4">Reject Claim</h3>
                 <form id="indexRejectForm" method="POST" action="">
                     @csrf

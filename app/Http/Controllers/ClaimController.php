@@ -196,6 +196,7 @@ class ClaimController extends Controller
                 'title', 'description', 'amount', 'currency',
                 'claim_date', 'category_id', 'priority'
             ]);
+            $claimData['status'] = 'draft';
 
             $claim->update($claimData);
 

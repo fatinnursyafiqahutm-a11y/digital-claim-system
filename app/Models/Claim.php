@@ -135,7 +135,7 @@ class Claim extends Model
      */
     public function canBeEdited(): bool
     {
-        return in_array($this->status, ['draft', 'returned_for_info']);
+        return in_array($this->status, ['draft', 'rejected' , 'returned_for_info']);
     }
 
     /**
