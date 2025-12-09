@@ -123,6 +123,36 @@
         </form>
     </div>
 
+    <div class="flex justify-end mb-4">
+        <div class="relative inline-block text-left">
+            <button type="button" onclick="document.getElementById('admin-export-menu').classList.toggle('hidden')" class="btn btn-primary inline-flex items-center">
+                <i class="fas fa-file-export mr-2"></i>
+                Export
+                <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+            </button>
+            <div id="admin-export-menu" class="origin-top-right absolute right-0 mt-2 w-lg rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 hidden z-10">
+                <div class="py-1 px-2 rounded-lg border border-slate-200">
+                    <form method="POST" action="{{ route('admin.claims.export') }}" class="px-4 py-2 flex items-center space-x-2">
+                        @csrf
+                        <input type="month" name="month" value="{{ request('month', now()->format('Y-m')) }}" class="border rounded-md px-2 py-1 text-sm w-full">
+                        <button type="submit" class="text-sm border bg-indigo-50 rounded-lg border-indigo-700 p-3 py-2 text-indigo-700 hover:bg-indigo-700 hover:text-white duration-300 font-semibold whitespace-nowrap">
+                            Export CSV
+                        </button>
+                    </form>
+                    {{-- <form method="POST" action="{{ route('admin.claims.export-pdf') }}" class="px-4 py-2 flex items-center space-x-2 border-t">
+                        @csrf
+                        <input type="month" name="month" value="{{ request('month', now()->format('Y-m')) }}" class="border rounded-md px-2 py-1 text-sm w-full">
+                        <button type="submit" class="text-sm border bg-indigo-50 rounded-lg border-indigo-700 p-3 py-2 text-indigo-700 hover:bg-indigo-700 hover:text-white duration-300 font-semibold whitespace-nowrap">
+                            Export PDF
+                        </button>
+                    </form> --}}
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Claims List -->
     <div class="dashboard-card">
         <div class="flex items-center mb-3">

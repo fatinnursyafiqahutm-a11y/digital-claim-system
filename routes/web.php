@@ -39,6 +39,9 @@ Route::middleware(['auth', 'verified', 'employee', 'password_reset_required'])->
 
     Route::post('/claims/{claim}/submit', [ClaimController::class, 'submit'])->name('claims.submit');
     Route::post('/claims/mark-all-read', [ClaimController::class, 'markAllReadEmployee'])->name('claims.mark-all-read');
+    Route::get('/claims/{claim}/print', [ClaimController::class, 'printEmployeeClaim'])->name('claims.print');
+    Route::post('/claims/export', [ClaimController::class, 'exportEmployeeClaims'])->name('claims.export');
+    Route::post('/claims/export-pdf', [ClaimController::class, 'exportEmployeeClaimsPdf'])->name('claims.export-pdf');
 
     // Receipt routes
     Route::get('/receipts/{receipt}/download', [ReceiptController::class, 'download'])->name('receipts.download');
@@ -68,6 +71,9 @@ Route::middleware(['auth', 'verified', 'finance_admin'])->prefix('admin')->name(
     // Claims management for finance admins
     Route::get('/claims', [ClaimController::class, 'adminIndex'])->name('claims.index');
     Route::get('/claims/{claim}', [ClaimController::class, 'adminShow'])->name('claims.show');
+    Route::get('/claims/{claim}/print', [ClaimController::class, 'printAdminClaim'])->name('claims.print');
+    Route::post('/claims/export', [ClaimController::class, 'exportAdminClaims'])->name('claims.export');
+    Route::post('/claims/export-pdf', [ClaimController::class, 'exportAdminClaimsPdf'])->name('claims.export-pdf');
     Route::post('/claims/{claim}/approve', [ClaimController::class, 'approve'])->name('claims.approve');
     Route::post('/claims/{claim}/reject', [ClaimController::class, 'reject'])->name('claims.reject');
     Route::post('/claims/mark-all-read', [ClaimController::class, 'markAllReadAdmin'])->name('claims.mark-all-read');

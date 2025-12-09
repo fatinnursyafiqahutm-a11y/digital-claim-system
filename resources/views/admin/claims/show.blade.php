@@ -347,6 +347,10 @@
                 <p class="text-gray-600">Review and manage claim #{{ $claim->id }}</p>
             </div>
             <div class="flex space-x-3">
+                <a href="{{ route('admin.claims.print', $claim->id) }}" target="_blank" class="btn btn-ghost border-indigo-600 text-indigo-700 hover:bg-indigo-50">
+                    <i class="fas fa-print mr-2"></i>
+                    Print / Export
+                </a>
                 <a href="{{ route('admin.claims.index') }}" class="btn btn-ghost">
                     <i class="fas fa-arrow-left mr-2"></i>
                     Back to Claims

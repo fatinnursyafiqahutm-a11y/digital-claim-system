@@ -8,6 +8,8 @@ use App\Http\Requests\UploadReceiptRequest;
 use App\Models\Claim;
 use App\Models\ClaimCategory;
 use App\Models\Receipt;
+use Carbon\Carbon;
+use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -141,7 +143,7 @@ class ClaimController extends Controller
     public function show($id)
     {
         $user = Auth::user();
-        $claim = Claim::with(['category', 'receipts', 'approvals', 'auditLogs'])
+        $claim = Claim::with(['user', 'category', 'receipts', 'approvals.approver', 'auditLogs.user'])
             ->where('user_id', $user->id)
             ->findOrFail($id);
 
@@ -157,6 +159,22 @@ class ClaimController extends Controller
         }
 
         return view('employee.claims.show', compact('claim', 'categoryData'));
+    }
+
+    /**
+     * Printable view of a single claim for employees.
+     */
+    public function printEmployeeClaim($id)
+    {
+        $user = Auth::user();
+        $claim = Claim::with(['user', 'category', 'receipts', 'approvals.approver', 'auditLogs.user'])
+            ->where('user_id', $user->id)
+            ->findOrFail($id);
+
+        return view('reports.claim_detail', [
+            'claim' => $claim,
+            'viewer' => 'employee',
+        ]);
     }
 
     public function edit($id)
@@ -345,6 +363,72 @@ class ClaimController extends Controller
         return redirect()->back()->with('success', 'All notifications marked as read.');
     }
 
+    /**
+     * Export employee claims for a given month as CSV.
+     */
+    public function exportEmployeeClaims(Request $request)
+    {
+        $user = Auth::user();
+        $monthInput = $request->input('month', now()->format('Y-m'));
+        $start = Carbon::createFromFormat('Y-m', $monthInput)->startOfMonth();
+        $end = $start->copy()->endOfMonth();
+
+        $claims = Claim::with(['category'])
+            ->where('user_id', $user->id)
+            ->whereBetween('claim_date', [$start, $end])
+            ->orderBy('claim_date')
+            ->get();
+
+        $fileName = "claims-{$start->format('Y-m')}.csv";
+
+        return response()->streamDownload(function () use ($claims) {
+            $handle = fopen('php://output', 'w');
+            fputcsv($handle, ['ID', 'Title', 'Category', 'Amount', 'Status', 'Claim Date']);
+            foreach ($claims as $claim) {
+                fputcsv($handle, [
+                    $claim->id,
+                    $claim->title,
+                    $claim->category->display_name ?? $claim->category->name ?? 'N/A',
+                    $claim->amount,
+                    $claim->status,
+                    optional($claim->claim_date)->format('Y-m-d'),
+                ]);
+            }
+            fclose($handle);
+        }, $fileName, [
+            'Content-Type' => 'text/csv',
+        ]);
+    }
+
+    /**
+     * Export employee claims for a given month as PDF.
+     */
+    public function exportEmployeeClaimsPdf(Request $request)
+    {
+        $user = Auth::user();
+        $monthInput = $request->input('month', now()->format('Y-m'));
+        $start = Carbon::createFromFormat('Y-m', $monthInput)->startOfMonth();
+        $end = $start->copy()->endOfMonth();
+
+        $claims = Claim::with(['category'])
+            ->where('user_id', $user->id)
+            ->whereBetween('claim_date', [$start, $end])
+            ->orderBy('claim_date')
+            ->get();
+
+        if (!class_exists(\Barryvdh\DomPDF\Facade\Pdf::class)) {
+            return redirect()->back()->with('error', 'PDF export not available (install barryvdh/laravel-dompdf).');
+        }
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('reports.claims_summary', [
+            'claims' => $claims,
+            'title' => 'Claims Summary',
+            'period' => $start->format('F Y'),
+        ]);
+
+        return $pdf->download("claims-{$start->format('Y-m')}.pdf");
+    }
+
     // Admin methods
     public function adminIndex(Request $request)
     {
@@ -419,7 +503,7 @@ class ClaimController extends Controller
             abort(403, 'Unauthorized access.');
         }
 
-        $claim = Claim::with(['user', 'category', 'receipts', 'approvals', 'auditLogs'])
+        $claim = Claim::with(['user', 'category', 'receipts', 'approvals.approver', 'auditLogs.user'])
             ->findOrFail($id);
 
         // Mark as read for admins when opened
@@ -446,6 +530,24 @@ class ClaimController extends Controller
             'categoryData',
             'userClaimHistory'
         ));
+    }
+
+    /**
+     * Printable view of a single claim for admins.
+     */
+    public function printAdminClaim($id)
+    {
+        if (!Auth::user()->hasRole('finance_admin')) {
+            abort(403, 'Unauthorized access.');
+        }
+
+        $claim = Claim::with(['user', 'category', 'receipts', 'approvals', 'auditLogs'])
+            ->findOrFail($id);
+
+        return view('reports.claim_detail', [
+            'claim' => $claim,
+            'viewer' => 'admin',
+        ]);
     }
 
     public function approve(Request $request, $id)
@@ -550,6 +652,77 @@ class ClaimController extends Controller
         Claim::where('is_admin_read', false)->update(['is_admin_read' => true]);
 
         return redirect()->back()->with('success', 'All notifications marked as read.');
+    }
+
+    /**
+     * Export claims for admins for a given month as CSV.
+     */
+    public function exportAdminClaims(Request $request)
+    {
+        if (!Auth::user()->hasRole('finance_admin')) {
+            abort(403, 'Unauthorized access.');
+        }
+
+        $monthInput = $request->input('month', now()->format('Y-m'));
+        $start = Carbon::createFromFormat('Y-m', $monthInput)->startOfMonth();
+        $end = $start->copy()->endOfMonth();
+
+        $claims = Claim::with(['category', 'user'])
+            ->whereBetween('claim_date', [$start, $end])
+            ->orderBy('claim_date')
+            ->get();
+
+        $fileName = "claims-admin-{$start->format('Y-m')}.csv";
+
+        return response()->streamDownload(function () use ($claims) {
+            $handle = fopen('php://output', 'w');
+            fputcsv($handle, ['ID', 'Employee', 'Title', 'Category', 'Amount', 'Status', 'Claim Date']);
+            foreach ($claims as $claim) {
+                fputcsv($handle, [
+                    $claim->id,
+                    $claim->user->name ?? 'N/A',
+                    $claim->title,
+                    $claim->category->display_name ?? $claim->category->name ?? 'N/A',
+                    $claim->amount,
+                    $claim->status,
+                    optional($claim->claim_date)->format('Y-m-d'),
+                ]);
+            }
+            fclose($handle);
+        }, $fileName, [
+            'Content-Type' => 'text/csv',
+        ]);
+    }
+
+    /**
+     * Export admin claims for a given month as PDF.
+     */
+    public function exportAdminClaimsPdf(Request $request)
+    {
+        if (!Auth::user()->hasRole('finance_admin')) {
+            abort(403, 'Unauthorized access.');
+        }
+
+        $monthInput = $request->input('month', now()->format('Y-m'));
+        $start = Carbon::createFromFormat('Y-m', $monthInput)->startOfMonth();
+        $end = $start->copy()->endOfMonth();
+
+        $claims = Claim::with(['category', 'user'])
+            ->whereBetween('claim_date', [$start, $end])
+            ->orderBy('claim_date')
+            ->get();
+
+        if (!class_exists(\Barryvdh\DomPDF\Facade\Pdf::class)) {
+            return redirect()->back()->with('error', 'PDF export not available (install barryvdh/laravel-dompdf).');
+        }
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('reports.claims_summary', [
+            'claims' => $claims,
+            'title' => 'Claims Summary (Admin)',
+            'period' => $start->format('F Y'),
+        ]);
+
+        return $pdf->download("claims-admin-{$start->format('Y-m')}.pdf");
     }
 
     /**
