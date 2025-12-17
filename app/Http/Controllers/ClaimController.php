@@ -749,80 +749,46 @@ class ClaimController extends Controller
         $categoryFieldMap = [
             'entertainment_meals' => [
                 'customer_name',
-                'company_name',
-                'meeting_purpose',
-                'location',
-                'attendees_count'
+                'company_name'
             ],
             'accommodation' => [
-                'hotel_name',
-                'location',
-                'check_in_date',
-                'check_out_date',
-                'room_type',
-                'booking_reference'
+                'accommodation_name',
+                'date_from',
+                'date_to',
+                'country',
+                'company_name'
             ],
             'transportation_trip' => [
-                'travel_from',
-                'travel_to',
-                'travel_purpose',
-                'transport_mode',
-                'departure_date',
-                'return_date',
-                'booking_reference'
+                'transportation_type',
+                'destination_from',
+                'destination_to',
+                'date'
             ],
             'petrol' => [
-                'vehicle_details',
-                'odometer_start',
-                'odometer_end',
-                'fuel_type',
-                'station_name',
-                'purchase_date'
+                'date'
             ],
             'toll' => [
-                'route_from',
-                'route_to',
-                'toll_plaza_name',
-                'travel_date',
-                'vehicle_type'
+                'date_from',
+                'date_to'
             ],
             'phone_bills' => [
-                'service_provider',
-                'account_number',
-                'billing_period_start',
-                'billing_period_end',
-                'business_usage_percentage',
-                'plan_type'
+                'date_from',
+                'date_to'
             ],
             'office_parking' => [
-                'parking_location',
-                'parking_duration',
-                'start_date',
-                'end_date',
-                'parking_type'
+                'date'
             ],
             'client_parking' => [
-                'client_name',
-                'client_company',
-                'meeting_purpose',
-                'parking_location',
-                'visit_date',
-                'duration_hours'
+                'partner_customer_name',
+                'date'
             ],
             'medical_claim' => [
-                'medical_provider',
-                'patient_name',
-                'treatment_type',
-                'treatment_date',
-                'medical_condition',
-                'prescription_required'
+                'date'
             ],
             'other_claims' => [
-                'expense_details',
-                'expense_type',
-                'justification',
-                'supplier_name',
-                'purchase_date'
+                'company_name',
+                'claim_details',
+                'date'
             ]
         ];
 
@@ -833,14 +799,6 @@ class ClaimController extends Controller
         foreach ($expectedFields as $field) {
             if (isset($submittedCategoryData[$field]) && $submittedCategoryData[$field] !== null && $submittedCategoryData[$field] !== '') {
                 $categoryData[$field] = $submittedCategoryData[$field];
-            }
-        }
-
-        // Handle special mapping for accommodation category
-        if ($category->name === 'accommodation') {
-            // Combine check_in_date and check_out_date into travel_dates field
-            if (isset($categoryData['check_in_date']) && isset($categoryData['check_out_date'])) {
-                $categoryData['travel_dates'] = $categoryData['check_in_date'] . ' to ' . $categoryData['check_out_date'];
             }
         }
 
