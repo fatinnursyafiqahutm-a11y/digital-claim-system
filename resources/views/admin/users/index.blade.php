@@ -132,14 +132,15 @@
 
                                     <form method="POST" action="{{ route('admin.users.destroy', $employee) }}" class="inline">
                                         @csrf
-                                        <button type="submit" class="btn btn-sm btn-danger">
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-danger" title="Disable User" onclick="return confirm('Are you sure you want to disable this user?')">
                                             <i class="fas fa-user-times"></i>
                                         </button>
                                     </form>
                                 @else
                                     <form method="POST" action="{{ route('admin.users.activate', $employee) }}" class="inline">
                                         @csrf
-                                        <button type="submit" class="btn btn-sm btn-alt">
+                                        <button type="submit" class="btn btn-sm btn-alt" title="Enable User">
                                             <i class="fas fa-user-check"></i>
                                         </button>
                                     </form>
