@@ -68,10 +68,10 @@
                 <i class="fas fa-file-invoice-dollar mr-2"></i>
                 Manage Claims
             </a>
-            <button class="btn btn-ghost text-center" disabled>
-                <i class="fas fa-chart-bar mr-2"></i>
-                Generate Reports
-            </button>
+            <a href="{{ route('admin.claims.index', ['unread' => 1]) }}" class="btn btn-alt text-center relative">
+                <i class="fas fa-bell mr-2"></i>
+                Notifications
+            </a>
         </div>
     </div>
 
