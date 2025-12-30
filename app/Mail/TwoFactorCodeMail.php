@@ -2,14 +2,14 @@
 
 namespace App\Mail;
 
-use App\Models\User;
+use App\Models\TwoFactorCode;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class UserAccountCreatedMail extends Mailable
+class TwoFactorCodeMail extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -17,8 +17,7 @@ class UserAccountCreatedMail extends Mailable
      * Create a new message instance.
      */
     public function __construct(
-        public User $user,
-        public string $password
+        public TwoFactorCode $twoFactorCode
     ) {
         //
     }
@@ -29,8 +28,8 @@ class UserAccountCreatedMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Welcome to ' . config('app.name') . ' - Your Account Has Been Created',
-            replyTo: config('mail.from.address'), // Replies will go to configured address
+            subject: 'Your Login Verification Code - ' . config('app.name'),
+            replyTo: config('mail.from.address'),
         );
     }
 
@@ -40,11 +39,12 @@ class UserAccountCreatedMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            markdown: 'emails.user-account-created',
+            markdown: 'emails.two-factor-code',
             with: [
-                'user' => $this->user,
-                'password' => $this->password,
-                'loginUrl' => route('login'),
+                'code' => $this->twoFactorCode->code,
+                'user' => $this->twoFactorCode->user,
+                'expiresAt' => $this->twoFactorCode->expires_at,
+                'twoFactorCode' => $this->twoFactorCode,
             ],
         );
     }

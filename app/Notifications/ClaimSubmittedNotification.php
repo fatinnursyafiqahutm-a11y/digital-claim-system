@@ -5,7 +5,6 @@ namespace App\Notifications;
 use App\Mail\ClaimSubmittedMail;
 use App\Models\Claim;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
 
 class ClaimSubmittedNotification extends Notification

@@ -5,7 +5,6 @@ namespace App\Notifications;
 use App\Mail\ClaimApprovedMail;
 use App\Models\Claim;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
 
 class ClaimApprovedNotification extends Notification

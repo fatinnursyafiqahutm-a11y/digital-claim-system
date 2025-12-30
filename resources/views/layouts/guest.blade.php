@@ -30,7 +30,7 @@
             </div>
 
             <div class="mt-8 text-center fade-in">
-                <p class="text-white/70 text-sm">
+                <p class="text-black/70 text-sm">
                     © 2025 Digital Claim System. All rights reserved.
                 </p>
             </div>

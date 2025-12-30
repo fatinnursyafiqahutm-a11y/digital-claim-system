@@ -2,12 +2,12 @@
 
 namespace App\Notifications;
 
-use App\Mail\UserAccountCreatedMail;
-use App\Models\User;
+use App\Mail\TwoFactorCodeMail;
+use App\Models\TwoFactorCode;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 
-class UserAccountCreatedNotification extends Notification
+class TwoFactorCodeNotification extends Notification
 {
     use Queueable;
 
@@ -15,8 +15,7 @@ class UserAccountCreatedNotification extends Notification
      * Create a new notification instance.
      */
     public function __construct(
-        public User $user,
-        public string $password
+        public TwoFactorCode $twoFactorCode
     ) {
         //
     }
@@ -36,7 +35,7 @@ class UserAccountCreatedNotification extends Notification
      */
     public function toMail(object $notifiable)
     {
-        return (new UserAccountCreatedMail($this->user, $this->password))
+        return (new TwoFactorCodeMail($this->twoFactorCode))
             ->to($notifiable->email);
     }
 
@@ -48,9 +47,8 @@ class UserAccountCreatedNotification extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'user_id' => $this->user->id,
-            'user_name' => $this->user->name,
-            'employee_id' => $this->user->employee_id,
+            'code_id' => $this->twoFactorCode->id,
+            'expires_at' => $this->twoFactorCode->expires_at,
         ];
     }
 }
