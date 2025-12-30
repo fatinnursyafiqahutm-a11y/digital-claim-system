@@ -8,6 +8,11 @@ use App\Http\Requests\UploadReceiptRequest;
 use App\Models\Claim;
 use App\Models\ClaimCategory;
 use App\Models\Receipt;
+use App\Models\Role;
+use App\Models\User;
+use App\Notifications\ClaimApprovedNotification;
+use App\Notifications\ClaimRejectedNotification;
+use App\Notifications\ClaimSubmittedNotification;
 use Carbon\Carbon;
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
@@ -330,6 +335,21 @@ class ClaimController extends Controller
             // Use the model's submitClaim method which includes all business logic
             $claim->submitClaim();
 
+            // Reload claim with relationships for notification
+            $claim->load(['user', 'category']);
+
+            // Notify all finance admins
+            $financeAdminRole = Role::where('name', 'finance_admin')->first();
+            if ($financeAdminRole) {
+                $financeAdmins = User::where('role_id', $financeAdminRole->id)
+                    ->where('is_active', true)
+                    ->get();
+
+                foreach ($financeAdmins as $admin) {
+                    $admin->notify(new ClaimSubmittedNotification($claim));
+                }
+            }
+
             Log::info('Claim submitted for approval successfully', [
                 'claim_id' => $claim->id,
                 'user_id' => $user->id,
@@ -338,7 +358,7 @@ class ClaimController extends Controller
 
             return redirect()
                 ->route('employee.claims.show', $claim->id)
-                ->with('success', 'Claim submitted for approval! You will be notified once it has been reviewed.');
+                ->with('success', 'Claim submitted for approval! Finance admins have been notified.');
 
         } catch (\Exception $e) {
             Log::error('Claim submission failed: ' . $e->getMessage(), [
@@ -573,6 +593,12 @@ class ClaimController extends Controller
                 $adminUser->id
             );
 
+            // Reload claim with relationships for notification
+            $claim->load(['user', 'category']);
+
+            // Notify the employee
+            $claim->user->notify(new ClaimApprovedNotification($claim));
+
             Log::info('Claim approved successfully', [
                 'claim_id' => $claim->id,
                 'approved_by' => $adminUser->id,
@@ -582,7 +608,7 @@ class ClaimController extends Controller
 
             return redirect()
                 ->route('admin.claims.show', $claim->id)
-                ->with('success', 'Claim approved successfully! Employee will be notified.');
+                ->with('success', 'Claim approved successfully! Employee has been notified via email.');
 
         } catch (\Exception $e) {
             Log::error('Claim approval failed: ' . $e->getMessage(), [
@@ -619,6 +645,12 @@ class ClaimController extends Controller
                 $adminUser->id
             );
 
+            // Reload claim with relationships for notification
+            $claim->load(['user', 'category']);
+
+            // Notify the employee
+            $claim->user->notify(new ClaimRejectedNotification($claim));
+
             Log::info('Claim rejected successfully', [
                 'claim_id' => $claim->id,
                 'rejected_by' => $adminUser->id,
@@ -628,7 +660,7 @@ class ClaimController extends Controller
 
             return redirect()
                 ->route('admin.claims.show', $claim->id)
-                ->with('success', 'Claim rejected successfully! Employee will be notified.');
+                ->with('success', 'Claim rejected successfully! Employee has been notified via email.');
 
         } catch (\Exception $e) {
             Log::error('Claim rejection failed: ' . $e->getMessage(), [

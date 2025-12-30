@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Role;
+use App\Notifications\UserAccountCreatedNotification;
 use App\Services\UserCreationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -78,9 +79,23 @@ class UserManagementController extends Controller
         $result = $this->userCreationService->createEmployee($request->all());
 
         if ($result['success']) {
+            $user = $result['user'];
+            $password = $result['password'];
+
+            // Send notification email to the new user
+            try {
+                $user->notify(new UserAccountCreatedNotification($user, $password));
+            } catch (\Exception $e) {
+                // Log error but don't fail the user creation
+                \Illuminate\Support\Facades\Log::error('Failed to send user creation email: ' . $e->getMessage(), [
+                    'user_id' => $user->id,
+                    'email' => $user->email
+                ]);
+            }
+
             return redirect()
                 ->route('admin.users.index')
-                ->with('success', "Employee '{$result['user']->name}' (ID: {$result['employee_id']}) created successfully. Default password: {$result['password']}");
+                ->with('success', "Employee '{$user->name}' (ID: {$result['employee_id']}) created successfully. Welcome email sent to {$user->email}.");
         }
 
         return redirect()
